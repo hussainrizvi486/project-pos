@@ -1,0 +1,58 @@
+# General Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.db
+*.sqlite3
+*.log
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+__pycache__/
+db.sqlite3
+/static/
+media/
+
+# Virtual environment
+env/
+venv/
+.venv/
+env.bak/
+venv.bak/
+# If you're using poetry
+.poetry/
+# If you're using pipenv
+Pipfile.lock
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# React
+node_modules/
+build/
+dist/
+*.log
+
+# Docker
+.docker/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Environment variables
+.env
+
+# Secrets
+*.env
+secret_key.txt
