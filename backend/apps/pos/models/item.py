@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
-from .main import UOM
+from . import UOM
 
 
 class ItemTypeChoices(models.TextChoices):
@@ -30,7 +29,7 @@ class Item(models.Model):
     variant_of = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True
     )
-    default_uom = models.CharField(max_length=255, null=True, blank=True)
+    default_uom = models.CharField(UOM, null=True, blank=True)
 
     def __str__(self):
         return self.item_name
