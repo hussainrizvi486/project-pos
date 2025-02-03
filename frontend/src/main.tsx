@@ -4,13 +4,19 @@ import POSApp from "./App.tsx";
 import { Provider } from "react-redux";
 import store from "./store.ts";
 import { BrowserRouter as Router } from "react-router-dom";
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Provider store={store}>
-      <Router>
-        <POSApp />
-      </Router>
-    </Provider>
+    <QueryClientProvider client={queryClient} >
+      <Provider store={store}>
+        <Router>
+          <POSApp />
+        </Router>
+      </Provider>
+    </QueryClientProvider>
   </StrictMode>
 );

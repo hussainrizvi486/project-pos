@@ -1,14 +1,13 @@
 export const POSItemCard = ({ item }) => {
-  if (!item) return;
+  const image = item.image ? "http://127.0.0.1:8000/" + item.image : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s"
   return (
     <div
-      className="p-2 h-48 bg-white rounded-md cursor-pointer 
-       shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]
+      className="p-1 h-48 bg-white rounded-md cursor-pointer border border-gray-300
         "
     >
       <div className="h-28">
         <img
-          src={item.image}
+          src={image}
           alt={item.item_name}
           className="h-full w-full object-contain"
         />
@@ -17,7 +16,7 @@ export const POSItemCard = ({ item }) => {
         <div className="text-sm overflow-hidden min-h-10 line-clamp-2">
           {item.item_name}
         </div>
-        <div className="text-sm font-semibold  mt-1">$ {item.price}</div>
+        <div className="text-sm font-semibold  mt-1">$ {item.price || 0}</div>
       </div>
     </div>
   );

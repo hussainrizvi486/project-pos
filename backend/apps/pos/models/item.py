@@ -22,6 +22,7 @@ class Item(models.Model):
     item_type = models.CharField(
         max_length=255, choices=ItemTypeChoices.choices, default=ItemTypeChoices.PRODUCT
     )
+    image = models.ImageField(upload_to="items", null=True, blank=True)
     item_name = models.CharField(max_length=255)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
@@ -36,7 +37,9 @@ class Item(models.Model):
 
 
 class ItemVariant(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="item_variant")
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="item_variant"
+    )
     attribute = models.CharField(max_length=255)
     attribute_value = models.CharField(max_length=255)
 

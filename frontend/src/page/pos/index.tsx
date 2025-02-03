@@ -1,4 +1,5 @@
-import { AlignJustify, Minus, Plus, Search, Trash2 } from "lucide-react";
+import { AlignJustify, AwardIcon, Minus, Plus, Search, Trash2 } from "lucide-react";
+
 
 // import { POSItemCard } from "./features/item/components";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,8 +12,11 @@ import {
 } from "../../features/pos/reducers/summary";
 
 import { Summary } from "./summary";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { POSItemCard } from "../../features/item/components/POSItemCard";
+import axios from "axios";
+import { useQuery } from '@tanstack/react-query';
+
 
 export const tempItems = [
   {
@@ -180,32 +184,52 @@ export const tempItems = [
 export interface POSItem {
   id: string;
   item_name: string;
-  image?: string;
   price: number;
   category: string;
+  image?: string;
+  description?: string,
   stock?: number;
   has_varaints?: boolean;
+  item_variant?: [];
+  variant_of?: string,
+  default_uom?: string,
 }
 
+
+
 const Page = () => {
-  const [posItems, setPosItems] = useState(tempItems);
+
   const dispatch = useDispatch();
+
+  const itemQuery = useQuery({
+    queryKey: ["posItems"],
+    queryFn: async () => {
+      const response = await axios.get("http://127.0.0.1:8000/pos/api/items");
+      return response.data;
+    }
+  });
+
+
 
   return (
     <div>
-      <div className="grid grid-cols-10 gap-2">
+      <div className="grid grid-cols-10 gap-1">
         <div className="col-span-7">
-          <div className="grid gap-4 grid-cols-6 overflow-y-scroll h-[75vh] px-4">
-            {posItems?.map((item, i) => (
-              <div
-                key={i}
-                onClick={() =>
-                  dispatch(addItemToSummary({ ...item, quantity: 1 }))
-                }
-              >
-                <POSItemCard item={item} />
-              </div>
-            ))}
+          <div className="overflow-y-scroll h-[75vh]">
+
+            <div className="grid gap-2 grid-cols-6  px-4">
+              {itemQuery.isLoading ? <div className="animate-pulse h-48  rounded-md"></div> :
+                itemQuery.data ? itemQuery.data.items.map((item, i) => ((
+                  <div
+                  key={i}
+                    onClick={() =>
+                      dispatch(addItemToSummary({ ...item, quantity: 1 }))
+                    }>
+                    <POSItemCard item={item} />
+                  </div>
+                ))) : <></>}
+            </div>
+
           </div>
         </div>
 
@@ -213,7 +237,7 @@ const Page = () => {
           <Summary />
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

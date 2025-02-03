@@ -1,16 +1,6 @@
-import { AlignJustify, Minus, Plus, Search, Trash2 } from "lucide-react";
+import { AlignJustify, Search } from "lucide-react";
 import "./index.css";
-import { POSItemCard } from "./features/item/components";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addItemToSummary,
-  updateItemQuantity,
-  removeItem,
-  getSummaryItems,
-  getTotalCost,
-} from "./features/pos/reducers/summary";
-import { ListView } from "./views/list";
-import React, { useState } from "react";
+import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import {
   Dialog,
@@ -19,255 +9,203 @@ import {
   DialogContent,
   DialogTitle,
 } from "./components/ui/dialog";
+import { Popover, PopoverTrigger, PopoverContent } from "./components/ui/popover";
+import { Checkbox } from "./components/ui/checkbox";
+import { SidebarProvider, Sidebar, SidebarTrigger } from "./components/ui/sidebar";
+import { Settings2, ReceiptText, PackageOpen, House, Dot } from "lucide-react"
+
 const POSPage = React.lazy(() => import("./page/pos/index"));
 
-interface POSItem {
-  id: string;
-  item_name: string;
-  image?: string;
-  price: number;
+
+
+const POSSidebar = () => {
+  const items = [
+    {
+      "label": "Point of Sale",
+      "icon": <House />
+    },
+    {
+      "label": "Accounting",
+      "icon": <ReceiptText />
+    },
+    {
+      "label": "POS Settings",
+      "icon": <Settings2 />
+    },
+
+    {
+      "label": "Inventory",
+      "icon": <PackageOpen />
+    },
+
+
+  ]
+
+  return (
+    <Sidebar variant="sidebar">
+
+      <div className="py-4 px-2">
+
+        <div className="flex items-center gap-2 mb-8 px-2">
+          <img src="https://cdn-icons-png.flaticon.com/512/4464/4464973.png" alt="" className="h-8 w-8" />
+          <div className=" font-medium">
+            Point of Sale
+          </div>
+        </div>
+        <div className="">
+          <ul className="flex w-full min-w-0 flex-col gap-1">
+
+            {items.map((val, i) => (
+              <li key={i} >
+                <button className="flex items-center gap-2 text-sm w-full p-2 text-left rounded-md hover:bg-gray-100 transition-all">
+                  <div className="[&_*]:size-5 [&_*]:stroke-gray-700">
+                    {val.icon ? val.icon : <><Dot /></>}
+                  </div>
+
+                  {val.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+
+        </div>
+
+      </div>
+
+
+    </Sidebar>
+  )
 }
+
 
 function POSApp() {
-  const [posItems, setPosItems] = useState([
-    {
-      category: "Electronics",
-      id: 1,
-      item_name: "Wireless Earbuds",
-      price: 10,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Accessories",
-      id: 2,
-      item_name: "Smartphone Stand",
-      price: 15,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Electronics",
-      id: 3,
-      item_name: "Bluetooth Speaker",
-      price: 20,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Accessories",
-      id: 4,
-      item_name: "Portable Charger",
-      price: 25,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Wearables",
-      id: 5,
-      item_name: "Fitness Tracker",
-      price: 30,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Home",
-      id: 6,
-      item_name: "LED Desk Lamp",
-      price: 35,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Accessories",
-      id: 7,
-      item_name: "Laptop Sleeve",
-      price: 40,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Gaming",
-      id: 8,
-      item_name: "Gaming Mouse",
-      price: 45,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Electronics",
-      id: 9,
-      item_name: "Noise-Canceling Headphones",
-      price: 50,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Electronics",
-      id: 10,
-      item_name: "4K Webcam",
-      price: 55,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Accessories",
-      id: 11,
-      item_name: "USB-C Hub",
-      price: 60,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Home",
-      id: 12,
-      item_name: "Smart Thermostat",
-      price: 65,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Electronics",
-      id: 13,
-      item_name: "Action Camera",
-      price: 70,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Gaming",
-      id: 14,
-      item_name: "VR Headset",
-      price: 75,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Electronics",
-      id: 15,
-      item_name: "Drone",
-      price: 80,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Wearables",
-      id: 16,
-      item_name: "Smartwatch",
-      price: 85,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Gaming",
-      id: 17,
-      item_name: "Gaming Chair",
-      price: 90,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Electronics",
-      id: 18,
-      item_name: "Streaming Microphone",
-      price: 95,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Electronics",
-      id: 19,
-      item_name: "Wi-Fi Router",
-      price: 100,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-    {
-      category: "Electronics",
-      id: 20,
-      item_name: "E-Reader",
-      price: 105,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s",
-    },
-  ]);
-  const dispatch = useDispatch();
-
   return (
-    <div>
-      <div className="border-b mb-4">
-        <Header />
-      </div>
-      {/* <Dialog>
-        <DialogTrigger asChild>
-          <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-            Open
-          </button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogTitle className="text-lg font-semibold leading-none tracking-tight">
-            POS Opening
-          </DialogTitle>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos,
-          suscipit. At necessitatibus perspiciatis maxime, sapiente provident in
-          cum praesentium amet nulla ipsam corrupti facilis possimus qui,
-          mollitia delectus fugit velit.
-        </DialogContent>
-      </Dialog> */}
-      <Routes>
-        <Route path="/" element={<POSPage />} />
-      </Routes>
-    </div>
-  );
-  return (
-    <div className="mx-auto max-w-[1200px]">
-      <div className="h-full">
-        <div className="app-container">
-          <Header />
-        </div>
-        <div className="app-container">
-          <div className="flex gap-4">
-            <div className="flex-auto">
-              <div className="grid gap-4 grid-cols-5">
-                {posItems.map((item, i) => (
-                  <div
-                    key={i}
-                    onClick={() =>
-                      dispatch(addItemToSummary({ ...item, quantity: 1 }))
-                    }
-                  >
-                    <POSItemCard itpem={item} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex-shrink-0 bg-white p-3 rounded-md">
-              <POSSummary />
-            </div>
+    <SidebarProvider defaultOpen={true}>
+      <POSSidebar />
+      <Suspense
+        fallback={<h1 className="text-9xl">Loading...</h1>}>
+        <div className="flex-auto">
+          <div className="border-b mb-4">
+            <Header />
           </div>
+          <Routes>
+            <Route path="/" element={<POSPage />} index />
+          </Routes>
         </div>
-      </div>
-    </div>
+      </Suspense>
+    </SidebarProvider>
   );
+
 }
 
-const Header = () => {
+
+
+export function SelectPriceList() {
+  const data = [
+    {
+      "price_list_name": "Standard Selling",
+      "currency": "PKR",
+      "status": "Active",
+    },
+    {
+      "price_list_name": "Ecommerce",
+      "currency": "PKR",
+      "status": "Active",
+
+    }
+  ]
   return (
-    <header className="flex items-center  justify-between px-6 py-4 ">
-      <div className="flex items-center gap-3">
-        <div className="">
+
+    <div className="h-10 w-10 p-2 bg-gray-300 rounded-full cursor-pointer">
+
+      <Dialog >
+        <DialogTrigger asChild>
           <AlignJustify />
-        </div>
-        <div className="flex border items-center rounded-full p-2 px-4 w-96">
-          <input
-            type="text"
-            placeholder="Search Item"
-            className="w-100 outline-none bg-transparent flex-auto text-sm"
-          />
-          <div className="search-box_icon">
-            <Search />
+        </DialogTrigger>
+
+        <DialogContent className="max-w-2xl">
+          <DialogTitle>Price List</DialogTitle>
+
+          <div>
+
+
+            <div className="rounded-md border">
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="border-b transition-colors">
+                    <th className="h-10 px-2 text-left">
+                      <Checkbox />
+                    </th>
+                    <th className="h-10 px-2 text-left align-middle">Price List Name</th>
+                    <th className="h-10 px-2 text-left align-middle">Status</th>
+                    <th className="h-10 px-2 text-left align-middle">Currency</th>
+                  </tr>
+                </thead>
+                {data.map((val, i) => (
+                  <tr key={i} className="border-b transition-colors hover:bg-gray-100 cursor-pointer">
+                    <td className="h-10 px-2 ">
+                      <Checkbox />
+                    </td>
+                    <td className="h-10 px-2 text-left align-middle">{val.price_list_name}</td>
+                    <td className="h-10 px-2 text-left align-middle">{val.status}</td>
+                    <td className="h-10 px-2 text-left align-middle">{val.currency}</td>
+                  </tr>
+                ))
+                }
+
+              </table>
+            </div>
+
           </div>
-        </div>
+
+          <DialogClose asChild>
+            <button className="rounded-md bg-gray-900 px-3 py-2 text-sm text-white">Close</button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
+
+const Header = () => {
+  const [isOpen, setIsOpen] = React.useState(true);
+  // Popover, PopoverTrigger, PopoverContent 
+  return (
+    <header className="flex items-center  justify-between px-6 py-2 ">
+      <div className="flex items-center gap-3">
+
+        {/* <SelectPriceList /> */}
+
+        <SidebarTrigger>
+          <div className="h-10 w-10 p-2 bg-gray-300 rounded-full cursor-pointer">
+            <AlignJustify />
+          </div>
+        </SidebarTrigger>
+
+        <Popover open={isOpen}>
+          <div className="flex border items-center rounded-full py-2 px-4 w-96 focus-within:ring-1">
+            <input
+              type="text"
+              placeholder="Search Item"
+              className="w-100 outline-none bg-transparent flex-auto text-sm"
+              onFocus={() => setIsOpen(true)}
+              onClick={() => setIsOpen(true)}
+            />
+            <div >
+              <Search />
+            </div>
+          </div>
+          <PopoverContent className="w-96">
+            <div className="border  p-2">
+              <div>Sex</div>
+              <div>Sex</div>
+              <div>Sex</div>
+              <div>Sex</div>
+              <div>Sex</div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div>
@@ -295,72 +233,5 @@ const Header = () => {
   );
 };
 
-const POSSummary = () => {
-  const summaryItems: Array<POSItem> = useSelector(getSummaryItems);
-  // const totalCost = useSelector(getTotalCost);
-
-  return (
-    <div className="w-[350px]">
-      <div className="font-bold text-center text-sm">Order Summary</div>
-      <div className="pos-summary-items">
-        {summaryItems.map((item, index) => (
-          <POSSummaryItem key={index} item={item} />
-        ))}
-      </div>
-      <div className="pos-summary-detail"></div>
-      <div className="pos-summary-actions">
-        {/* <div className="flex gap-1">
-          <button className="btn">Save Order</button>
-          <button className="btn">Cancel Order</button>
-        </div> */}
-        {/* <div className="total-cost">Total Cost: ${totalCost.toFixed(2)}</div> */}
-      </div>
-    </div>
-  );
-};
-
-const POSSummaryItem = ({ item }) => {
-  if (!item) return;
-
-  return (
-    <div className="border mb-2 p-2 rounded">
-      <div className="flex justify-between">
-        <div className="flex gap-2 flex-auto">
-          <div className="border rounded overflow-hidden flex-shrink-0">
-            <img className=" max-w-[6rem] h-full " src={item.image} alt="" />
-          </div>
-          <div className="pt-2 flex-auto ">
-            <div className="text-sm line-clamp-2">{item.item_name}</div>
-            <div className="text-sm">{item.category}</div>
-            <div className="font-semibold mt-2">$ {item.price}</div>
-          </div>
-        </div>
-
-        <div>
-          <div role="button">
-            <Trash2 className="size-5 stroke-red-500" />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end">
-        <div className="flex items-center bg-gray-100 rounded-3xl p-1 w-32">
-          <button className="rounded-full bg-white cursor-pointer p-2">
-            <Minus className="size-5" />
-          </button>
-          <input
-            type="text"
-            value={item.quantity}
-            className="h-full w-full bg-transparent outline-none text-center"
-            readOnly
-          />
-          <button className="rounded-full bg-white cursor-pointer p-2">
-            <Plus className="size-5" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default POSApp;
