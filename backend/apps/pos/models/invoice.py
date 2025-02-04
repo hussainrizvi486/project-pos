@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from .item import Item, ItemPrice
-from . import UOM
+from .main import UOM
 
 
 class Customer(models.Model):
