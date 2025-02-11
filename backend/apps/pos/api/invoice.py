@@ -9,7 +9,7 @@ from rest_framework.response import Response
 def create_invoice(request):
     data = request.data
     data["customer"] = "1"
-    serializer = POSInvoiceSerailizer(data=data)
+    serializer = POSInvoiceSerailizer(data=data, context={"request": request})
 
     if serializer.is_valid():
         print(serializer.validated_data)

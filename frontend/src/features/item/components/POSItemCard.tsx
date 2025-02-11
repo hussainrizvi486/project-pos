@@ -1,5 +1,5 @@
 export const POSItemCard = ({ item }) => {
-  const image = item.image ? "http://127.0.0.1:8000/" + item.image : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s"
+  const image = item.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s"
   return (
     <div
       className="p-1 h-48 bg-white rounded-md cursor-pointer border border-gray-300

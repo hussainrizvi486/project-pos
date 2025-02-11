@@ -1,12 +1,18 @@
 from django.contrib import admin
-from .models.item import Item, Category, ItemVariant
-from .models.invoice import POSInvoice, POSInvoiceItem, POSInvoicePayment, POSInvoiceTax, Customer
-
-
+from .models.item import Item, Category, ItemVariant, ItemPrice,PriceList
+from .models.invoice import (
+    POSInvoice,
+    POSInvoiceItem,
+    POSInvoicePayment,
+    POSInvoiceTax,
+    Customer,
+)
 
 
 admin.site.register(Category)
 admin.site.register(Customer)
+admin.site.register(ItemPrice)
+admin.site.register(PriceList)
 
 
 @admin.register(Item)
@@ -19,6 +25,7 @@ class ItemAdmin(admin.ModelAdmin):
 
 @admin.register(POSInvoice)
 class POSInvoiceAdmin(admin.ModelAdmin):
+    
     class POSInvoicePaymentInline(admin.TabularInline):
         model = POSInvoicePayment
         extra = 1

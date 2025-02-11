@@ -210,7 +210,6 @@ const Page = () => {
   });
 
 
-
   return (
     <div>
       <div className="grid grid-cols-10 gap-1">
@@ -221,7 +220,7 @@ const Page = () => {
               {itemQuery.isLoading ? <div className="animate-pulse h-48  rounded-md"></div> :
                 itemQuery.data ? itemQuery.data.items.map((item, i) => ((
                   <div
-                  key={i}
+                    key={i}
                     onClick={() =>
                       dispatch(addItemToSummary({ ...item, quantity: 1 }))
                     }>

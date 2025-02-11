@@ -1,7 +1,7 @@
 import { AlignJustify, Search } from "lucide-react";
 import "./index.css";
 import React, { Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import {
   Dialog,
   DialogTrigger,
@@ -15,6 +15,8 @@ import { SidebarProvider, Sidebar, SidebarTrigger } from "./components/ui/sideba
 import { Settings2, ReceiptText, PackageOpen, House, Dot } from "lucide-react"
 
 const POSPage = React.lazy(() => import("./page/pos/index"));
+const InvoicePage = React.lazy(() => import("./page/invoice/index"));
+const LoginPage = React.lazy(() => import("./page/auth/login"));
 
 
 
@@ -25,8 +27,9 @@ const POSSidebar = () => {
       "icon": <House />
     },
     {
-      "label": "Accounting",
-      "icon": <ReceiptText />
+      "label": "Invoices",
+      "icon": <ReceiptText />,
+      "url": "/invoice"
     },
     {
       "label": "POS Settings",
@@ -57,13 +60,14 @@ const POSSidebar = () => {
 
             {items.map((val, i) => (
               <li key={i} >
-                <button className="flex items-center gap-2 text-sm w-full p-2 text-left rounded-md hover:bg-gray-100 transition-all">
-                  <div className="[&_*]:size-5 [&_*]:stroke-gray-700">
-                    {val.icon ? val.icon : <><Dot /></>}
-                  </div>
-
-                  {val.label}
-                </button>
+                <Link to={val.url || ""} >
+                  <button className="flex items-center gap-2 text-sm w-full p-2 text-left rounded-md hover:bg-gray-100 transition-all">
+                    <div className="[&_*]:size-5 [&_*]:stroke-gray-700">
+                      {val.icon ? val.icon : <><Dot /></>}
+                    </div>
+                    {val.label}
+                  </button>
+                </Link>
               </li>
             ))}
           </ul>
@@ -88,8 +92,11 @@ function POSApp() {
           <div className="border-b mb-4">
             <Header />
           </div>
+
           <Routes>
             <Route path="/" element={<POSPage />} index />
+            <Route path="/invoice" element={<InvoicePage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </div>
       </Suspense>

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from . import UOM
+from .main import UOM
 
 
 class ItemTypeChoices(models.TextChoices):
@@ -21,7 +21,7 @@ class Item(models.Model):
     item_type = models.CharField(
         max_length=255, choices=ItemTypeChoices.choices, default=ItemTypeChoices.PRODUCT
     )
-    image = models.ImageField(upload_to="items", null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
     item_name = models.CharField(max_length=255)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
@@ -29,7 +29,7 @@ class Item(models.Model):
     variant_of = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True
     )
-    default_uom = models.CharField(UOM, null=True, blank=True)
+    default_uom = models.CharField(UOM, null=True, blank=True, max_length=255)
 
     def __str__(self):
         return self.item_name
