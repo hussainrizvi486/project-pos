@@ -1,8 +1,17 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": [
-        "./*"
+      "@components/*": [
+        "components/*"
+      ],
+      "@features/*": [
+        "features/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@api": [
+        "api/*"
       ]
     },
     "checkJs": false

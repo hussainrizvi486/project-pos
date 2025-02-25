@@ -1,4 +1,4 @@
-from .items import ItemList
+from .items import ItemList, PriceListAPIView
 from .category import CategoryAPIView
 
 __all__ = [

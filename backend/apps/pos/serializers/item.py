@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.pos.models.item import Item, ItemVariant
+from apps.pos.models.item import Item, ItemVariant, PriceList, ItemPrice
 
 
 class ItemVarinatSerializer(serializers.ModelSerializer):
@@ -12,9 +12,9 @@ class ItemSerailizer(serializers.ModelSerializer):
     item_variant = ItemVarinatSerializer(many=True, read_only=True)
     category_name = serializers.CharField(source="category.name", read_only=True)
     image = serializers.SerializerMethodField()
-    price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True) 
+    price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+
     def get_image(self, obj):
-        print(self)
         if not obj.image:
             return None
 
@@ -40,3 +40,15 @@ class ItemSerailizer(serializers.ModelSerializer):
             "item_type",
             "default_uom",
         ]
+
+
+class PriceListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PriceList
+        fields = ("currency", "price_list", "disabled", "price_list_type")
+
+
+class ItemPriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPrice
+        fields = ("item", "price_list", "price", "valid_from", "valid_to")

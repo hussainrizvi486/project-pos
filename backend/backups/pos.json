@@ -1,0 +1,116 @@
+[
+    {
+        "model": "pos.category",
+        "pk": 1,
+        "fields": {
+            "name": "Clothes",
+            "parent": null
+        }
+    },
+    {
+        "model": "pos.category",
+        "pk": 2,
+        "fields": {
+            "name": "Home Decor",
+            "parent": null
+        }
+    },
+    {
+        "model": "pos.category",
+        "pk": 3,
+        "fields": {
+            "name": "Bottes",
+            "parent": null
+        }
+    },
+    {
+        "model": "pos.item",
+        "pk": 1,
+        "fields": {
+            "item_type": "product",
+            "image": "",
+            "item_name": "Dokotoo Womens 2024 Split V Neck Ruffle Chiffon Elegant Mini Short Skirt Dresses",
+            "category": 1,
+            "description": "Dokotoo Womens 2024 Split V Neck Ruffle Chiffon Elegant Mini Short Skirt Dresses",
+            "disabled": false,
+            "variant_of": null,
+            "default_uom": null
+        }
+    },
+    {
+        "model": "pos.item",
+        "pk": 2,
+        "fields": {
+            "item_type": "product",
+            "image": "items/71wOD0g2aPL._AC_SL1500_.jpg",
+            "item_name": "WOPITUES Wood Floating Shelves Set of 6, Shelves for Wall Decor, Farmhouse Shelf for Bedroom, Bathroom Storage Shelves, Book Shelves for Living Room - Rustic Brown",
+            "category": 2,
+            "description": "WOPITUES Wood Floating Shelves Set of 6, Shelves for Wall Decor, Farmhouse Shelf for Bedroom, Bathroom Storage Shelves, Book Shelves for Living Room - Rustic Brown",
+            "disabled": false,
+            "variant_of": null,
+            "default_uom": null
+        }
+    },
+    {
+        "model": "pos.item",
+        "pk": 3,
+        "fields": {
+            "item_type": "product",
+            "image": "items/71trK-1ZCbL._AC_SX679_.jpg",
+            "item_name": "Floating Shelves for Wall 36 Inches Long, Large Natural Wood Floating Shelves for Kitchen Wall Mounted Heavy Duty Floating Shelf for Wall Bathroom Bedroom Living Room, 12 Inches Deep Floating Shelves",
+            "category": 2,
+            "description": "Floating Shelves for Wall 36 Inches Long, Large Natural Wood Floating Shelves for Kitchen Wall Mounted Heavy Duty Floating Shelf for Wall Bathroom Bedroom Living Room, 12 Inches Deep Floating Shelves",
+            "disabled": false,
+            "variant_of": null,
+            "default_uom": null
+        }
+    },
+    {
+        "model": "pos.item",
+        "pk": 4,
+        "fields": {
+            "item_type": "product",
+            "image": "items/718aGtV7xdL._AC_SL1500_.jpg",
+            "item_name": "2 Pcs Boho Wooden Rainbow Wall Shelves,Floating Shelves for Wall, Rainbow Arch Boho Floating Shelves Bohemian Rainbow Hanging Shelf Wall Mount Book Shelf,Modern Boho Wall Shelf for Bathroom Decor",
+            "category": 2,
+            "description": "2 Pcs Boho Wooden Rainbow Wall Shelves,Floating Shelves for Wall, Rainbow Arch Boho Floating Shelves Bohemian Rainbow Hanging Shelf Wall Mount Book Shelf,Modern Boho Wall Shelf for Bathroom Decor",
+            "disabled": false,
+            "variant_of": null,
+            "default_uom": null
+        }
+    },
+    {
+        "model": "pos.item",
+        "pk": 5,
+        "fields": {
+            "item_type": "product",
+            "image": "items/61PbhVIS1ML._AC_SL1500_.jpg",
+            "item_name": "HOOBRO Floating Wall Shelves, 15.4 Inch Floating Shelves Set of 2, Wall Mounted Shelf Storage Shelves with Metal Brackets, for Living Room, Bedroom, Study, Bathroom, Rustic Brown and Black BF42BJP201",
+            "category": 2,
+            "description": "HOOBRO Floating Wall Shelves, 15.4 Inch Floating Shelves Set of 2, Wall Mounted Shelf Storage Shelves with Metal Brackets, for Living Room, Bedroom, Study, Bathroom, Rustic Brown and Black BF42BJP201",
+            "disabled": false,
+            "variant_of": null,
+            "default_uom": null
+        }
+    },
+    {
+        "model": "pos.item",
+        "pk": 6,
+        "fields": {
+            "item_type": "product",
+            "image": "items/61WM1xukklL._AC_SL1500_.jpg",
+            "item_name": "Stanley Quencher H2.0 Tumbler with Handle & Straw 30 oz | Twist On 3-Way Lid | Cupholder Compatible for Travel | Insulated Stainless Steel Cup | BPA-Free | Peony",
+            "category": 3,
+            "description": "Stanley Quencher H2.0 Tumbler with Handle & Straw 30 oz | Twist On 3-Way Lid | Cupholder Compatible for Travel | Insulated Stainless Steel Cup | BPA-Free | Peony",
+            "disabled": false,
+            "variant_of": null,
+            "default_uom": null
+        }
+    },
+    {
+        "model": "pos.item",
+        "pk": 7,
+        "fields": {
+            "item_type": "product",
+            "image": "items/61RtU6ECkbL.__AC_SX300_SY300_QL70_FMwebp_.webp",
+            "item_name":

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from .main import UOM
+from .main import UOM, BaseModel
 
 
 class ItemTypeChoices(models.TextChoices):
@@ -9,7 +9,7 @@ class ItemTypeChoices(models.TextChoices):
     VARIANT = "variant", "VARIANT"
 
 
-class Category(models.Model):
+class Category(BaseModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
 
@@ -17,7 +17,7 @@ class Category(models.Model):
         return self.name
 
 
-class Item(models.Model):
+class Item(BaseModel):
     item_type = models.CharField(
         max_length=255, choices=ItemTypeChoices.choices, default=ItemTypeChoices.PRODUCT
     )
@@ -29,13 +29,15 @@ class Item(models.Model):
     variant_of = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True
     )
-    default_uom = models.CharField(UOM, null=True, blank=True, max_length=255)
+    default_uom = models.ForeignKey(
+        UOM, null=True, blank=True, max_length=255, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return self.item_name
 
 
-class ItemVariant(models.Model):
+class ItemVariant(BaseModel):
     item = models.ForeignKey(
         Item, on_delete=models.CASCADE, related_name="item_variant"
     )
@@ -46,7 +48,7 @@ class ItemVariant(models.Model):
         return self.item.item_name
 
 
-class ItemUom(models.Model):
+class ItemUom(BaseModel):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     uom = models.ForeignKey(UOM, on_delete=models.CASCADE)
     conversion_factor = models.DecimalField(
@@ -64,14 +66,14 @@ class ItemUom(models.Model):
         ...
 
 
-class PriceList(models.Model):
+class PriceList(BaseModel):
     price_list = models.CharField(max_length=255)
     currency = models.CharField(max_length=255)
     price_list_type = models.CharField(max_length=255)
     disabled = models.BooleanField(default=False)
 
 
-class ItemPrice(models.Model):
+class ItemPrice(BaseModel):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     price_list = models.ForeignKey(PriceList, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -84,5 +86,3 @@ class ItemPrice(models.Model):
 
     def __str__(self):
         return f"{self.item.item_name} {self.price}"
-
-    ...

@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from .item import Item, ItemPrice
-from .main import UOM
+from .main import UOM, BaseModel
 
 
-class Customer(models.Model):
+class Customer(BaseModel):
     customer_name = models.CharField(max_length=100)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True)
 
@@ -12,7 +12,7 @@ class Customer(models.Model):
         return self.customer_name
 
 
-class POSInvoice(models.Model):
+class POSInvoice(BaseModel):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     posting_date = models.DateField(auto_now_add=True)
     total_qty = models.DecimalField(max_digits=10, decimal_places=2)
@@ -28,7 +28,7 @@ class POSInvoice(models.Model):
         return super().save(*args, **kwargs)
 
 
-class POSInvoicePayment(models.Model):
+class POSInvoicePayment(BaseModel):
     invoice = models.ForeignKey(
         POSInvoice, on_delete=models.CASCADE, related_name="payments"
     )
@@ -37,7 +37,7 @@ class POSInvoicePayment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 
-class POSInvoiceItem(models.Model):
+class POSInvoiceItem(BaseModel):
     invoice = models.ForeignKey(
         POSInvoice, on_delete=models.CASCADE, related_name="items"
     )
@@ -56,7 +56,7 @@ class POSInvoiceItem(models.Model):
         super().save(*args, **kwargs)
 
 
-class POSInvoiceTax(models.Model):
+class POSInvoiceTax(BaseModel):
     invoice = models.ForeignKey(POSInvoice, on_delete=models.CASCADE)
     tax_type = models.CharField(max_length=255)
     tax_rate = models.DecimalField(max_digits=10, decimal_places=2)

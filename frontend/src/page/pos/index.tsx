@@ -201,17 +201,15 @@ const ItemGridLoading = () => {
   return (
     <div className="grid gap-2 grid-cols-6  px-4">
       {[...Array(20)].map((_, i) => (
-        <div key={i} className="animate-pulse h-48  rounded-md"></div>
+        <div key={i} className="animate-pulse h-48 bg-gray-200  rounded-md"></div>
       ))}
     </div>
   )
 }
 
 const Page = () => {
-
   const dispatch = useDispatch();
-  // console.warn(import.meta.env.VITE_API_URL)
-  // return <></>
+
   const itemQuery = useQuery({
     queryKey: ["posItems"],
     queryFn: async () => {
@@ -226,9 +224,7 @@ const Page = () => {
       <div className="grid grid-cols-10 gap-1">
         <div className="col-span-7">
 
-
           <div className="overflow-y-scroll h-[75vh]">
-
             {
               itemQuery.isLoading ? <ItemGridLoading /> :
                 itemQuery.isSuccess && itemQuery.data?.items?.length ? <div className="grid gap-2 grid-cols-6  px-4">
@@ -246,26 +242,6 @@ const Page = () => {
                 </div>
             }
           </div>
-
-
-          {/* <div className="overflow-y-scroll h-[75vh]">
-
-            <div className="grid gap-2 grid-cols-6  px-4">
-              {itemQuery.isLoading ? <div className="animate-pulse h-48  rounded-md"></div> :
-                itemQuery.data ? itemQuery.data.items.map((item, i) => ((
-                  <div
-                    key={i}
-                    onClick={() =>
-                      dispatch(addItemToSummary({ ...item, quantity: 1 }))
-                    }>
-                    <POSItemCard item={item} />
-                  </div>
-                ))) : !itemQuery.data && !itemQuery.isLoading && !itemQuery.isSuccess ? <></> : <></>}
-            </div>
-
-          </div> */}
-
-
         </div>
 
         <div className="flex-shrink-0 bg-white p-3 rounded-md border  border-red-100 col-span-3">

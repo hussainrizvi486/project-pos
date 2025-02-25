@@ -4,8 +4,10 @@ import {
   removeItem,
   updateItemQuantity,
 } from "../../features/pos/reducers/summary";
+import axios from "axios";
 import { Divide, FilePenLine, Minus, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import moment from "moment";
 
 interface POSItem { }
 
@@ -13,6 +15,27 @@ export const Summary = () => {
   const POSSummary = useSelector(getPosSummary);
   const summaryItems = POSSummary?.summaryItems;
 
+  const saveOrder = async () => {
+    const items = POSSummary.summaryItems.map(val => (
+      {
+        "item": val.id,
+        "net_rate": val.price,
+        "qty": val.quantity,
+        "discount": 0,
+        "uom": null
+      }
+    ))
+
+    const data = {
+      "customer": 1,
+      "items": items,
+      "posting_date": moment(),
+    }
+    console.warn(import.meta.env.VITE_API_URL + "/pos/api/order/create")
+    const request = await axios.post(import.meta.env.VITE_API_URL + "/pos/api/order/create", data);
+
+    console.log(request.status)
+  }
 
   return (
     <div>
@@ -43,7 +66,8 @@ export const Summary = () => {
       <div>
 
         <div className="flex gap-2 items-center">
-          <button className="rounded-md bg-gray-900 px-3 py-2 text-sm  text-white  w-full">
+          <button className="rounded-md bg-gray-900 px-3 py-2 text-sm  text-white  w-full"
+            onClick={saveOrder}>
             Complete
           </button>
           <button className="rounded-md bg-gray-900 px-3 py-2 text-sm  text-white w-full">
@@ -68,7 +92,7 @@ export const POSSummaryItem = ({ item }) => {
     dispatch(updateItemQuantity({ id: item.id, type: type }));
   };
 
-  const image = item.image ? "http://127.0.0.1:8000/" + item.image : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s"
+  const image = item.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsuilBKtOw0Fx1T2c1-nJvBfWLawRf17S-Ug&s";
 
   if (!item) return;
 

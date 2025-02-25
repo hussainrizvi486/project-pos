@@ -3,16 +3,21 @@ import os
 import subprocess
 
 
-def main():
-    os.chdir("./frontend")
-    react_process = subprocess.Popen(["npm", "start"])
+FOLDERS = {
+    "frontend": os.path.join(os.getcwd(), "frontend"),
+    "backend": os.path.join(os.getcwd(), "backend"),
+}
 
-    os.chdir("./backend")
-    server_process = subprocess.Popen(["py", "manage.py", "runserver"])
 
-    react_process.wait()
-    server_process.wait()
+def start_development_servers():
+    # django_server = subprocess.Popen(
+    #     ["python", "manage.py", "runserver"], cwd=FOLDERS.get("backend")
+    # )
+    react_server = subprocess.Popen(["npm", "run", "dev"], cwd=FOLDERS.get("frontend"))
+
+    # django_server.wait()
+    react_server.wait()
 
 
 if __name__ == "__main__":
-    main()
+    start_development_servers()

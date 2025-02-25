@@ -5,11 +5,44 @@
 
 @layer base {
     :root {
-        --primary: #000000;
-        --primary-foreground: #000000;
+        /* --primary: #000000;
+        --primary-foreground: #000000; */
 
         --sidebar-width-icon: 3rem;
         --sidebar-width: 12rem;
+        --background: #ffffff;
+        --foreground: #0a0a0a;
+        --card: #ffffff;
+        --card-foreground: #0a0a0a;
+        --popover: #ffffff;
+        --popover-foreground: #0a0a0a;
+        --primary: #1a1a1a;
+        --primary-foreground: #fafafa;
+        --secondary: #f3f3f3;
+        --secondary-foreground: #1a1a1a;
+        --muted: #f3f3f3;
+        --muted-foreground: #767676;
+        --accent: #f3f3f3;
+        --accent-foreground: #1a1a1a;
+        --destructive: #b20000;
+        --destructive-foreground: #fafafa;
+        --border: #e6e6e6;
+        --input: #e6e6e6;
+        --ring: #a3a3a3;
+        --radius: 0.5rem;
+        --chart-1: #ff4d4d;
+        --chart-2: #2db2b2;
+        --chart-3: #3f5f5f;
+        --chart-4: #b2b200;
+        --chart-5: #ffb200;
+        --sidebar-background: #fafafa;
+        --sidebar-foreground: #424242;
+        --sidebar-primary: #1a1a1a;
+        --sidebar-primary-foreground: #fafafa;
+        --sidebar-accent: #f3f3f3;
+        --sidebar-accent-foreground: #1a1a1a;
+        --sidebar-border: #e6e6e6;
+        --sidebar-ring: #a3a3a3;
     }
 
     html {

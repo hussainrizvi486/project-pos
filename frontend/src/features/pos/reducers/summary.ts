@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from "./store";
+// import type { RootState } from "./store";
 
 interface SummaryItem {
     id: string,
@@ -93,7 +93,7 @@ export const posSummarySlice = createSlice({
 });
 
 export const { addItemToSummary, updateItemQuantity, removeItem } = posSummarySlice.actions;
-export const getSummaryItems = (state: RootState) => state.pos.summaryItems;
-export const getPosSummary = (state: RootState) => state.pos;
+export const getSummaryItems = (state) => state.pos.summaryItems;
+export const getPosSummary = (state) => state.pos;
 
 export default posSummarySlice.reducer;
