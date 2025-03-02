@@ -1,137 +1,164 @@
 import { Outlet, Link } from "react-router-dom";
-import { Settings2, ReceiptText, PackageOpen, House, Dot } from "lucide-react";
+import { Settings2, ReceiptText, PackageOpen, House, Dot, Settings as SettingsIcon, X as CloseIcon } from "lucide-react";
 import { SidebarProvider, Sidebar, SidebarTrigger } from "@components/ui/sidebar";
 import { Header } from "./header";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@components/ui/dialog";
 
-function PriceListDiaog() {
+import React, { useState } from "react";
+import axios from "axios";
+import { useQuery } from '@tanstack/react-query'
+import { BASE_API_URL } from "@api";
+import { DialogClose } from "@radix-ui/react-dialog";
+
+const PriceListDialog = ({ isOpen }: { isOpen: boolean }) => {
+
+
+    const query = useQuery({
+        queryKey: ["price-list"],
+        queryFn: async () => {
+            const response = await axios.get(BASE_API_URL + "/pos/api/price-list");
+            return response.data;
+        },
+
+    });
+    interface PriceListType {
+        currency: string;
+        price_list: string;
+        disabled: boolean;
+        price_list_type: string
+    }
+    // {
+    //     "currency": "PKR",
+    //     "price_list": "Standard Selling",
+    //     "disabled": false,
+    //     "price_list_type": "selling"
+    // }
+
+    // console.log(query.isLoading)
+    // console.log(query.data)
+
     return (
-        <Dialog defaultOpen={true}>
-            <DialogContent >
-                <DialogTitle>Price List</DialogTitle>
-
-
+        <Dialog open={isOpen}>
+            <DialogTrigger asChild></DialogTrigger>
+            <DialogContent className="p-4 max-w-3xl">
                 <div>
-                    <table>
-                        <tr>
-                            <th>Sr</th>
-                            <th>Name</th>
-                            <th>Currency</th>
-                        </tr>
-                    </table>
+                    <div className="mb-4 flex items-center justify-between">
+                        <div className="font-semibold ml-1">
+                            Price List
+                        </div>
+
+                        <DialogClose asChild>
+                            <div className="hover:cursor-pointer">
+                                <CloseIcon className="size-6" />
+                            </div>
+                        </DialogClose>
+                    </div>
+
+                    <div className="border rounded overflow-hidden">
+
+                        <table className="w-full ">
+                            <thead>
+                                <tr>
+                                    <th className="bg-gray-200 text-black text-sm text-left font-medium p-3 border-b w-3/12">Price list</th>
+                                    <th className="bg-gray-200 text-black text-sm text-left font-medium p-3 border-b w-3/12">Currency</th>
+                                    <th className="bg-gray-200 text-black text-sm text-left font-medium p-3 border-b w-3/12">22Type</th>
+                                    <th className="bg-gray-200 text-black text-sm text-left font-medium p-3 border-b w-3/12">Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {
+                                    query.data ? query.data.map((row: PriceListType, i) => (
+                                        <tr className="hover:cursor-pointer hover:bg-gray-100 transition-all" key={i}>
+                                            <td className="text-sm text-left p-3 ">{row.price_list}</td>
+                                            <td className="text-sm text-left p-3 ">{row.currency}</td>
+                                            <td className="text-sm text-left p-3 ">{row.price_list_type}</td>
+                                            <td className="text-sm text-left p-3 ">
+
+                                                <div className="flex gap text-sm items-center font-semibold"> {!row.disabled ? "Enabled" : "Disabled"}</div>
+                                            </td>
+                                        </tr>
+                                    )) : <tr><td colSpan={4} className="text-sm p-3 font-semibold text-center">No Items</td></tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    <div className="flex justify-end mt-4">
+                        <button className="rounded-md bg-gray-900 px-2 py-1 text-sm  text-white ">Save</button>
+
+                    </div>
                 </div>
+
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};
 
-const PriceList = [
+const SIDEBAR_ITEMS = [
     {
-        "sr": 1,
-        "name": "Standard Selling",
-        "currency": "PKR",
-        "status": "Enabled"
+        label: "Point of Sale",
+        icon: <House />,
+        handleClick: function () { }
     },
-
     {
-        "sr": 2,
-        "name": "Discount",
-        "currency": "PKR",
-        "status": "Enabled"
+        label: "Invoices",
+        icon: <ReceiptText />,
+        url: "/invoice",
+        handleClick: function () { }
     },
+    {
+        label: "POS Settings",
+        icon: <Settings2 />,
+    },
+    {
+        label: "Settings",
+        icon: <SettingsIcon />,
+        handleClick: function () { }
+    },
+    {
+        label: "Inventory",
+        icon: <PackageOpen />,
+        handleClick: function () { }
+    },
+];
 
-]
+
 export const SidebarLayout = () => {
+    const [isOpen, setIsOpen] = useState(false);
 
 
-    const SIDEBAR_ITEMS = [
-        {
-            "label": "Point of Sale",
-            "icon": <House />
-        },
-        {
-            "label": "Invoices",
-            "icon": <ReceiptText />,
-            "url": "/invoice"
-        },
-        {
-            "label": "POS Settings",
-            "icon": <Settings2 />
-        },
-        {
-            "label": "Inventory",
-            "icon": <PackageOpen />,
-            render: () =>
-            (
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <button className="flex items-center gap-2 text-sm w-full p-2 text-left rounded-md hover:bg-gray-100 transition-all">
-                            <div className="[&_*]:size-5 [&_*]:stroke-gray-700">
-                                <PackageOpen />
-                            </div>
-                            Inventory
-                        </button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <div className="p-4">
-                            <div className="text-lg font-semibold mb-4">Price List</div>
 
-                            <div>
-                                <table className="border border-gray-200 w-full table-fixed">
-                                    <thead>
-                                        <tr className="bg-gray-100">
-                                            <th className="p-1 px-2 border-b border-gray-200 text-sm font-medium text-left w-6">#</th>
-                                            <th className="p-1 px-2 border-b border-gray-200 text-sm font-medium text-left">Name</th>j
-                                            <th className="p-1 px-2 border-b border-gray-200 text-sm font-medium text-left">Currency</th>
-                                            <th className="p-1 px-2 border-b border-gray-200 text-sm font-medium text-left">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {PriceList.map((val, i) => (
-                                            <tr key={i} className="hover:bg-gray-100 cursor-pointer">
-                                                <td className="p-1 px-2 border-b text-sm font-medium text-left">{val.sr}</td>
-                                                <td className="p-1 px-2 border-b text-sm font-medium text-left">{val.name}</td>
-                                                <td className="p-1 px-2 border-b text-sm font-medium text-left">{val.currency}</td>
-                                                <td className="p-1 px-2 border-b text-sm font-medium text-left">{val.status}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </DialogContent>
-                </Dialog>
-            )
-
-
-        },
-    ]
     return (
         <SidebarProvider>
+            <PriceListDialog isOpen={isOpen} />
+
             <Sidebar variant="sidebar">
                 <div className="py-4 px-2">
                     <div className="flex items-center gap-2 mb-8 px-2">
-                        <img src="https://cdn-icons-png.flaticon.com/512/4464/4464973.png" alt="" className="h-8 w-8" />
-                        <div className=" font-medium">
-                            Point of Sale
-                        </div>
+                        <img
+                            src="https://cdn-icons-png.flaticon.com/512/4464/4464973.png"
+                            alt=""
+                            className="h-8 w-8"
+                        />
+                        <div className="font-medium">Point of Sale</div>
                     </div>
-                    <div className="">
+                    <div>
                         <ul className="flex w-full min-w-0 flex-col gap-1">
-
                             {SIDEBAR_ITEMS.map((val, i) => (
-                                <li key={i} >
-                                    {
-                                        val.render ? val.render() : <Link to={val.url || ""} onClick={val.onClick}>
-                                            <button className="flex items-center gap-2 text-sm w-full p-2 text-left rounded-md hover:bg-gray-100 transition-all">
-                                                <div className="[&_*]:size-5 [&_*]:stroke-gray-700">
-                                                    {val.icon ? val.icon : <><Dot /></>}
-                                                </div>
-                                                {val.label}
-                                            </button>
-                                        </Link>
-                                    }
-
+                                <li key={i}>
+                                    <button
+                                        className="flex items-center gap-2 text-sm w-full p-2 text-left rounded-md hover:bg-gray-100 transition-all"
+                                        onClick={() => {
+                                            setIsOpen((prev) => !prev);
+                                        }}
+                                    >
+                                        <div className="[&_*]:size-5 [&_*]:stroke-gray-700">
+                                            {val.icon}
+                                        </div>
+                                        {val.label}
+                                    </button>
                                 </li>
                             ))}
                         </ul>
@@ -143,6 +170,7 @@ export const SidebarLayout = () => {
                 <Header />
                 <Outlet />
             </div>
+
         </SidebarProvider>
-    )
-}
+    );
+};
