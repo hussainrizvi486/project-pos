@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+    .bg-popover {
+        background-color: var(--popover);
+    }
+
+    .bg-primary {
+        background-color: var(--primary);
+    }
+
+    .text-popover-foreground {
+        color: var(--popover-foreground);
+    }
+
+    .animate-in {
+        animation-name: enter;
+        animation-duration: .15s;
+        --tw-enter-opacity: initial;
+        --tw-enter-scale: initial;
+        --tw-enter-rotate: initial;
+        --tw-enter-translate-x: initial;
+        --tw-enter-translate-y: initial
+    }
+}
+
+@keyframes enter {
+    0% {
+        opacity: var(--tw-enter-opacity, 1);
+        transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0))
+    }
+}
 
 @layer base {
     :root {

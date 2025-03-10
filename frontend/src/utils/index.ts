@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as React from "react"
 
@@ -23,4 +24,11 @@ export function useIsMobile() {
     }, [])
 
     return !!isMobile
+}
+
+
+
+export function decimal(value: any, precision = 2) {
+    const v = isNaN(parseFloat(value)) ? 0 : parseFloat(value);
+    return v.toFixed(precision);
 }

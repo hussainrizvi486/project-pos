@@ -1,15 +1,19 @@
 import React from "react";
-import { cn } from "@utils";
+// import { cn, decimal } from "@utils";
+import { CircleX } from "lucide-react";
+import { Input } from "@components/ui/input";
 
 
-const DEFAULT_PLACEHOLDERS = {
-    "text": "Enter text",
-    "textarea": "Enter text",
-    "number": "0",
-    "float": "0.00",
+
+interface FormFieldType {
+    label: string
+    required?: boolean
+    name: string
+    placeholder?: string
+    type: "text" | "textarea" | "date" | "select" | "number"
+    options?: Array<{ label: string, value: string }>
 }
 
-const DEFAULT_PRECISION = 0;
 
 const formFields = [
     {
@@ -106,76 +110,8 @@ const formFields = [
 ];
 
 
-interface InputProps {
-    name: string
-    placeholder?: string
-    className?: string
-    required?: boolean
-    type: "text" | "float" | "number"
-    precision?: number,
-    onChange?: (value: any) => void
-    onBlur?: (value: any) => void
-}
-
-function decimal(value: any, precision = 2) {
-    console.log(precision)
-    const v = isNaN(parseFloat(value)) ? 0 : parseFloat(value);
-    return v.toFixed(precision);
-}
 
 
-
-const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-    const precision = props.precision || DEFAULT_PRECISION;
-
-
-    function parseValue(value: any) {
-        switch (props.type) {
-            case "text":
-                return value;
-
-            case "float":
-                return decimal(value, precision);
-
-            case "number":
-
-                return isNaN(parseInt(value)) ? 0 : parseInt(value);
-            default:
-                return value;
-        }
-
-    };
-
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const { value } = e.target;
-        const parsedValue = parseValue(value);
-
-        if (props.onChange) {
-            props.onChange(parsedValue);
-        }
-    }
-
-
-    function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
-        e.target.value = parseValue(e.target.value);;
-        if (props.onBlur) {
-            props.onBlur(parseValue(e.target.value));
-        }
-    }
-
-    return (
-        <input
-            type="text"
-            ref={ref}
-            name={props.name}
-            placeholder={props.placeholder || DEFAULT_PLACEHOLDERS[props.type]}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required={props.required}
-            className={cn("mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")}
-        />
-    )
-})
 
 
 const FormSection = ({ children }) => {
@@ -196,18 +132,6 @@ const FormColumn = ({ children }) => {
 
 export const DataForm = () => {
 
-
-    interface FormFieldType {
-        label: string
-        required?: boolean
-        name: string
-        placeholder?: string
-        type: "text" | "textarea" | "date" | "select" | "number"
-        options?: Array<{ label: string, value: string }>
-    }
-
-
-
     const renderField = ({ field }: { field: FormFieldType }) => {
         switch (field.type) {
             case "text":
@@ -220,7 +144,6 @@ export const DataForm = () => {
         }
 
     }
-
 
 
     return (
@@ -252,6 +175,100 @@ export const DataForm = () => {
                     )
                 })}
             </form>
+
+
+            <button className="inline-flex cursor-not-allowed items-center rounded-md bg-indigo-500 px-4 py-2 text-sm leading-6 font-semibold text-white transition duration-150 ease-in-out hover:bg-indigo-400">
+                <svg className="mr-3 -ml-1 size-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                Save
+            </button>
+        </div>
+    );
+};
+
+
+
+interface TableInputProps {
+    columns: Array<FormFieldType>;
+    value: Array<Record<string, any>>;
+    onChange: (value: Array<Record<string, any>>) => void;
+}
+
+export const TableInput: React.FC<TableInputProps> = ({ columns, value = [], onChange }) => {
+    const handleAddRow = () => {
+        const newRow = columns.reduce((acc, column) => {
+            acc[column.name] = "";
+            return acc;
+        }, {} as Record<string, any>);
+        onChange([...value, newRow]);
+    };
+
+    const handleRemoveRow = (index: number) => {
+        const newValue = [...value];
+        newValue.splice(index, 1);
+        onChange(newValue);
+    };
+
+    const handleCellChange = (rowIndex: number, columnName: string, cellValue: any) => {
+        const newValue = [...value];
+        newValue[rowIndex] = {
+            ...newValue[rowIndex],
+            [columnName]: cellValue
+        };
+        onChange(newValue);
+    };
+
+    return (
+        <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        {columns.map((column, index) => (
+                            <th
+                                key={index}
+                                className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                {column.label}
+                            </th>
+                        ))}
+                        <th className="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                    {value.map((row, rowIndex) => (
+                        <tr key={rowIndex}>
+                            {columns.map((column, colIndex) => (
+                                <td key={colIndex} className="px-6 py-4 whitespace-nowrap">
+                                    <Input
+                                        {...column}
+                                        value={row[column.name] || ""}
+                                        onChange={(val) => handleCellChange(rowIndex, column.name, val)}
+                                    />
+                                </td>
+                            ))}
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveRow(rowIndex)}
+                                    className="text-red-600 hover:text-red-900"
+                                >
+                                    <CircleX />
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            <div className="mt-2">
+                <button
+                    type="button"
+                    onClick={handleAddRow}
+                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                >
+                    Add Row
+                </button>
+            </div>
         </div>
     );
 };

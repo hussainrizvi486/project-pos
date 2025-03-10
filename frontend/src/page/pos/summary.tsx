@@ -27,7 +27,7 @@ export const Summary = () => {
     ))
 
     const data = {
-      "customer": 1,
+      "customer": "ee2a5368-3681-4239-a33a-80f3634ddc04",
       "items": items,
       "posting_date": moment(),
     }

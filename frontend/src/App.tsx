@@ -20,6 +20,7 @@ const LoadingSpinner = () => {
   );
 };
 
+
 function POSApp() {
   return (
     <Suspense fallback={<LoadingSpinner />}>

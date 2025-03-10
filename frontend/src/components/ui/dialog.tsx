@@ -1,8 +1,6 @@
-"use client";
-
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { cn } from "../../utils";
+import { cn } from "@utils";
 
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
@@ -16,7 +14,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-dialog-show data-[state=closed]:animate-dialog-hide data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-dialog-show data-[state=closed]:animate-dialog-hide data-[state=closed]:fade-out-0 data-[state=closed]:hidden  data-[state=open]:fade-in-0 ",
       className || ""
     )}
     {...props}
@@ -34,7 +32,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "outline-none fixed left-[50%] top-[25%] z-50 w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-2 shadow-lg duration-200 sm:rounded-md",
+        "outline-none fixed left-[50%] top-[25%] z-50 w-full translate-x-[-50%] translate-y-[-25%] gap-4 border bg-white p-2 shadow-lg duration-200 sm:rounded-md",
         className || ""
       )}
       {...props}

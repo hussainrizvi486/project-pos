@@ -32,10 +32,6 @@ class ItemList(APIView):
         items_queryset = Item.objects.annotate(
             price=Subquery(itemprice_query)
         ).prefetch_related("item_variant")
-        from django.db import connection
-
-        print(connection.queries)
-        print(items_queryset.query)
 
         serializer = ItemSerailizer(
             items_queryset, many=True, context={"request": self.request}
@@ -47,4 +43,3 @@ class ItemList(APIView):
 class PriceListAPIView(ListAPIView):
     serializer_class = PriceListSerializer
     queryset = PriceList.objects.all()
-    

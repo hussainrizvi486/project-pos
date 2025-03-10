@@ -84,21 +84,21 @@ WSGI_APPLICATION = "server.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": BASE_DIR / "db.sqlite3",
-    # }
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "neondb",
-        "USER": "neondb_owner",
-        "PASSWORD": "npg_5pWKYvatzFw8",
-        "HOST": "ep-late-salad-a8o1suyp-pooler.eastus2.azure.neon.tech",
-        "PORT": "5432",
-        "OPTIONS": {
-            "sslmode": "require",
-        },
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": "neondb",
+    #     "USER": "neondb_owner",
+    #     "PASSWORD": "npg_5pWKYvatzFw8",
+    #     "HOST": "ep-late-salad-a8o1suyp-pooler.eastus2.azure.neon.tech",
+    #     "PORT": "5432",
+    #     "OPTIONS": {
+    #         "sslmode": "require",
+    #     },
+    # }
 }
 
 
@@ -149,6 +149,7 @@ MEDIA_URL = "/media/"
 
 
 REST_FRAMEWORK = {
+    "COERCE_DECIMAL_TO_STRING": False,
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
