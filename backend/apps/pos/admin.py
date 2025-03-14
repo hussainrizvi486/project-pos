@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models.item import Item, Category, ItemVariant, ItemPrice,PriceList
+from .models.item import Item, Category, ItemVariant, ItemPrice, PriceList, UOM
 from .models.invoice import (
     POSInvoice,
     POSInvoiceItem,
@@ -9,6 +9,7 @@ from .models.invoice import (
 )
 
 
+admin.site.register(UOM)
 admin.site.register(Category)
 admin.site.register(Customer)
 admin.site.register(ItemPrice)
@@ -21,11 +22,12 @@ class ItemAdmin(admin.ModelAdmin):
         model = ItemVariant
 
     inlines = [VariantInline]
+    ordering = ["-created_at"]
 
 
 @admin.register(POSInvoice)
 class POSInvoiceAdmin(admin.ModelAdmin):
-    
+
     class POSInvoicePaymentInline(admin.TabularInline):
         model = POSInvoicePayment
         extra = 1

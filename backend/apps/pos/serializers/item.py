@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.pos.models.item import Item, ItemVariant, PriceList, ItemPrice
+from apps.pos.models.item import Item, ItemVariant, PriceList, ItemPrice, ItemUom
 
 
 class ItemVarinatSerializer(serializers.ModelSerializer):
@@ -45,10 +45,29 @@ class ItemSerailizer(serializers.ModelSerializer):
 class PriceListSerializer(serializers.ModelSerializer):
     class Meta:
         model = PriceList
-        fields = ("currency", "price_list", "disabled", "price_list_type")
+        fields = ["currency", "price_list", "disabled", "price_list_type"]
 
 
 class ItemPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPrice
         fields = ("item", "price_list", "price", "valid_from", "valid_to")
+
+
+class CreateItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = [
+            "item_name",
+            "category",
+            "description",
+            "disabled",
+            "image",
+            "default_uom",
+        ]
+
+
+class ItemUomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemUom
+        fields = ["item", "uom", "conversion_factor"]

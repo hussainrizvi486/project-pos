@@ -6,14 +6,18 @@ from .main import UOM, BaseModel
 
 class Customer(BaseModel):
     customer_name = models.CharField(max_length=100)
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, null=True, blank=True
+    )
+    mobile_no = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return self.customer_name
 
 
 class POSInvoice(BaseModel):
-    # invoice_no = models.CharField(max_length=100, unique=True)
+    invoice_no = models.CharField(max_length=100, null=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     posting_date = models.DateField(auto_now_add=True)
     total_qty = models.DecimalField(max_digits=10, decimal_places=2, default=0)

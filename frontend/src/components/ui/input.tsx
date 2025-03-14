@@ -20,7 +20,16 @@ interface InputProps {
     onBlur?: (value: any) => void
 }
 
+const INPUT_CLASS_TYPE = {
+    "text": "text-left ",
+    "number": "text-right ",
+    "float": "text-right ",
+}
+
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+    // if (!props.type) props.type = "text";
+
+
     const precision = props.precision || DEFAULT_PRECISION;
     function parseValue(value: any) {
         switch (props.type) {
@@ -65,7 +74,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             onChange={handleChange}
             onBlur={handleBlur}
             required={props.required}
-            className={cn("mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm")}
+            className={cn("mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm", INPUT_CLASS_TYPE[props.type] || "", props.className || "")}
         />
     )
 })

@@ -72,6 +72,9 @@ class PriceList(BaseModel):
     price_list_type = models.CharField(max_length=255)
     disabled = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.price_list
+
 
 class ItemPrice(BaseModel):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
@@ -85,4 +88,4 @@ class ItemPrice(BaseModel):
         return self.valid_from <= timezone.now().date() <= self.valid_to
 
     def __str__(self):
-        return f"{self.item.item_name} {self.price}"
+        return f"{self.item.item_name} ->  {self.price}"

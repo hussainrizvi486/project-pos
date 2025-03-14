@@ -1,19 +1,46 @@
+import axios from "axios";
+import moment from "moment";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner"
+import { Command } from "cmdk";
+
 import {
   getPosSummary,
   removeItem,
   updateItemQuantity,
-} from "../../features/pos/reducers/summary";
-import axios from "axios";
-import { Divide, FilePenLine, Minus, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import moment from "moment";
+} from "@features/pos/reducers/summary";
 
-interface POSItem { }
+import { Check, ChevronsUpDown, Divide, FilePenLine, Minus, Plus, Trash2 } from "lucide-react";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui/popover";
+import { useQuery } from "@tanstack/react-query";
+import { cn } from "@utils/index";
+import { useNavigate } from "react-router-dom";
+// import { cn } from "@utils/index";
+// import { Button } from "@components/ui/button";
+
+// interface POSItem { }
+
+const fetchCustomer = async () => {
+  const request = axios.get(import.meta.env.VITE_API_URL + "/pos/api/customer");
+  return (await request).data;
+}
 
 export const Summary = () => {
   const POSSummary = useSelector(getPosSummary);
+  const navigate = useNavigate();
   const summaryItems = POSSummary?.summaryItems;
+
+
+
+  const handleCheckout = () => {
+    navigate("/checkout");
+  }
 
   const saveOrder = async () => {
     const items = POSSummary.summaryItems.map(val => (
@@ -31,14 +58,18 @@ export const Summary = () => {
       "items": items,
       "posting_date": moment(),
     }
+
     console.warn(import.meta.env.VITE_API_URL + "/pos/api/order/create")
     const request = await axios.post(import.meta.env.VITE_API_URL + "/pos/api/order/create", data);
-
+    toast("Order has been saved")
     console.log(request.status)
   }
 
   return (
     <div>
+      <div>
+        <CustomerField />
+      </div>
       <div className="mb-4">
         <h1 className="font-bold text-center ">Order Summary</h1>
       </div>
@@ -67,7 +98,7 @@ export const Summary = () => {
 
         <div className="flex gap-2 items-center">
           <button className="rounded-md bg-gray-900 px-3 py-2 text-sm  text-white  w-full"
-            onClick={saveOrder}>
+            onClick={handleCheckout}>
             Complete
           </button>
           <button className="rounded-md bg-gray-900 px-3 py-2 text-sm  text-white w-full">
@@ -152,3 +183,90 @@ export const POSSummaryItem = ({ item }) => {
     </div>
   );
 };
+
+
+
+
+const CustomerField = () => {
+  const customerQuery = useQuery({
+    queryKey: ["customer"],
+    queryFn: fetchCustomer,
+  });
+
+
+
+  interface OptionType {
+    label: string
+    value: string
+  }
+
+
+  const [options, setOptions] = useState<OptionType[]>([]);
+  // const [searchQuery, setSearchQuery] = useState("");
+
+  const [value, setValue] = useState<OptionType>(null);
+
+
+
+  useEffect(() => {
+    if (customerQuery.data) {
+      const data = customerQuery.data.map((customer: object) => {
+        return {
+          label: customer.customer_name,
+          value: customer.id
+        }
+      })
+      setOptions(data);
+    }
+
+  }, [customerQuery.data])
+
+  const handleSelect = (value: OptionType) => {
+    setValue(value);
+  }
+
+  console.log(options);
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className="mb-2 flex gap-1 items-center justify-between w-full py-2  px-2 rounded-md border border-gray-300 text-sm bg-mint-500 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+        >
+          {
+            value ? value.label
+              : "Select Customer..."}
+
+          <ChevronsUpDown className="opacity-50" />
+        </button>
+      </PopoverTrigger>
+
+      <PopoverContent className="w-96 p-0 ">
+        <Command>
+          <Command.List>
+            <Command.Group>
+              {
+
+                options && options.length ?
+                  options.map((row) => (
+                    <Command.Item
+                      key={row.value}
+                      className="relative flex cursor-default gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+                      value={row.value}
+                      onSelect={() => handleSelect(row)}
+                    >
+                      {row.label}
+                      {value?.value === row.value && (
+                        <Check className={cn("ml-auto", "opacity-100")} />
+                      )}
+                    </Command.Item>
+                  ))
+                  : <div className="py-6 text-center text-sm">No results found.</div>
+              }
+
+            </Command.Group>
+          </Command.List>
+        </Command>
+      </PopoverContent>
+
+    </Popover>)
+}

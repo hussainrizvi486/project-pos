@@ -39,38 +39,38 @@ interface PriceListType {
     disabled: boolean;
 }
 
-const mockPriceLists: PriceListType[] = [
-    {
-        price_list: "Standard Retail",
-        price_list_type: "Selling",
-        currency: "USD",
-        disabled: false,
-    },
-    {
-        price_list: "Wholesale",
-        price_list_type: "Selling",
-        currency: "USD",
-        disabled: false,
-    },
-    {
-        price_list: "Discount Sale",
-        price_list_type: "Selling",
-        currency: "USD",
-        disabled: true,
-    },
-    {
-        price_list: "International",
-        price_list_type: "Selling",
-        currency: "EUR",
-        disabled: false,
-    },
-    {
-        price_list: "Supplier Default",
-        price_list_type: "Buying",
-        currency: "USD",
-        disabled: false,
-    },
-];
+// const mockPriceLists: PriceListType[] = [
+//     {
+//         price_list: "Standard Retail",
+//         price_list_type: "Selling",
+//         currency: "USD",
+//         disabled: false,
+//     },
+//     {
+//         price_list: "Wholesale",
+//         price_list_type: "Selling",
+//         currency: "USD",
+//         disabled: false,
+//     },
+//     {
+//         price_list: "Discount Sale",
+//         price_list_type: "Selling",
+//         currency: "USD",
+//         disabled: true,
+//     },
+//     {
+//         price_list: "International",
+//         price_list_type: "Selling",
+//         currency: "EUR",
+//         disabled: false,
+//     },
+//     {
+//         price_list: "Supplier Default",
+//         price_list_type: "Buying",
+//         currency: "USD",
+//         disabled: false,
+//     },
+// ];
 
 interface PriceListDialogProps {
     children: React.ReactNode;
@@ -177,6 +177,7 @@ const PriceListDialog: React.FC<PriceListDialogProps> = ({
             setData(priceListQuery.data);
         }
     }, [priceListQuery.data]);
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

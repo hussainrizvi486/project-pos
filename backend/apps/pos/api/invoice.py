@@ -24,12 +24,14 @@ def create_invoice(request):
 
 class InvoiceAPIView(APIView):
     def post(self, request):
-        data = request.data
-        serializer = POSInvoiceSerializer(data=data, context={"request": request})
+        serializer = POSInvoiceSerializer(
+            data=self.request.data, context={"request": self.request}
+        )
 
         if serializer.is_valid():
+            invoice = serializer.save()
             return Response(
-                data={"message": "order created successfully!"},
+                data={"message": "order created successfully!", "invoice": invoice.id},
                 status=status.HTTP_201_CREATED,
             )
         else:

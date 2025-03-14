@@ -4,6 +4,7 @@ import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { SidebarLayout } from "@components/layouts";
 import { DataForm } from "@components/data-form";
+import { Toaster } from "sonner";
 
 // import { Checkbox } from "@components/ui/checkbox";
 
@@ -24,6 +25,7 @@ const LoadingSpinner = () => {
 function POSApp() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
+      <Toaster />
       <Routes>
         <Route element={<SidebarLayout />}>
           <Route path="/" element={<POSPage />} index />
