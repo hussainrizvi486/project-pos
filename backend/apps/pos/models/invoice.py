@@ -16,7 +16,18 @@ class Customer(BaseModel):
         return self.customer_name
 
 
+class InvoiceStatusChoices(models.TextChoices):
+    DRAFT = "Draft", "Draft"
+    POSTED = "Posted", "Posted"
+    OVERDUE = "Overdue", "Overdue"
+    PAID = "Paid", "Paid"
+    CANCELLED = "Cancelled", "Cancelled"
+
+
 class POSInvoice(BaseModel):
+    status = models.CharField(
+        max_length=50, choices=InvoiceStatusChoices.choices, null=True
+    )
     invoice_no = models.CharField(max_length=100, null=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     posting_date = models.DateField(auto_now_add=True)

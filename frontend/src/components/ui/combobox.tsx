@@ -76,11 +76,6 @@ export const Combobox = ({
         setOpen(false);
     };
 
-    // const handleClear = () => {
-    //     setValue(null);
-    //     onChange?.(null);
-    //     setSearchQuery("");
-    // };
 
     return (
         <Popover open={open} onOpenChange={setOpen}>

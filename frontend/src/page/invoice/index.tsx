@@ -1,17 +1,70 @@
+import { useQuery } from '@tanstack/react-query'
 import DataGrid from "../../components/data-grid";
 import { Badge } from "../../components/ui/badge";
+import axios from "axios";
 
 const Page = () => {
 
+    const ivnoiceQuery = useQuery({
+        queryKey: ["invoice"],
+        queryFn: async () => {
+            const request = await axios.get(import.meta.env.VITE_API_URL + "/pos/api/invoice");
+            return request.data;
+        }
+    })
+
+
+    const invoiceData = ivnoiceQuery?.data || [];
+
+    const columns = [
+        { label: "ID", accessor: "invoice_no", sortable: true, },
+        { label: "Customer", accessor: "customer_name", sortable: true },
+        {
+            label: "Date", accessor: "posting_date", sortable: true, type: "date"
+        },
+        {
+            label: "Quantity", accessor: "total_qty", sortable: true, type: "float"
+        },
+        { label: "Grand Total", accessor: "grand_total", sortable: true, width: 20, type: "currency" },
+        { label: "Amount", accessor: "paid_amount", sortable: true, type: "currency" },
+        { label: "Due Amount", accessor: "outstanding_amount", sortable: true, type: "currency" },
+        {
+            label: "Status", accessor: "status", sortable: true,
+            renderCell: (value) => {
+                return (
+                    <Badge radius="medium" color={value == "Pending" ? "yellow" : value == "Paid" ? "green" : value == "Partial" ? "blue" : "red"}>
+                        {value}
+                    </Badge>)
+            }
+        },
+    ]
     return (
         <div className="px-4">
             <div>
                 <div className="text-lg font-semibold ">POS Invoice</div>
-
             </div>
             <div></div>
             <div className="mt-4">
-                <DataGrid
+                <table className='w-full border'>
+                    <thead>
+                        <tr>
+                            {columns.map((column, i) => (
+                                <th key={i} className="text-left text-sm font-semibold px-2 py-2">{column.label}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {invoiceData.map((row, i) => (
+                            <tr key={i} className="border-t">
+                                {columns.map((column, j) => (
+                                    <td key={j} className="px-2 py-2 text-sm">{row[column.accessor]}</td>
+                                ))}
+                            </tr>
+
+                        ))}
+                    </tbody>
+                </table>
+                {/* <DataGrid
                     columns={[
                         { label: "ID", accessor: "id", sortable: true, },
                         { label: "Customer", accessor: "customer", sortable: true },
@@ -26,73 +79,20 @@ const Page = () => {
                         { label: "Due Amount", accessor: "due_amount", sortable: true, type: "currency" },
                         {
                             label: "Status", accessor: "status", sortable: true,
-
                             renderCell: (value) => {
                                 return (
-                                    <Badge radius="medium" color={value == "Pending" ? "yellow" : value == "Paid" ? "green" : value == "Overdue" ? "red" : "blue"}>
+                                    <Badge radius="medium" color={value == "Pending" ? "yellow" : value == "Paid" ? "green" : value == "Partial" ? "blue" : "red"}>
                                         {value}
                                     </Badge>)
                             }
                         },
-                    ]
-                    }
-                    data={[
-                        {
-                            id: "INV0001",
-                            customer: "John Doe",
-                            date: "2022-10-10",
-                            quantity: 5,
-                            grand_total: 100,
-                            amount: 80,
-                            due_amount: 20,
-                            status: "Paid",
-                        },
-                        {
-                            id: "INV00034",
-                            customer: "John Doe",
-                            date: "2022-10-10",
-                            quantity: 5,
-                            grand_total: 100,
-                            amount: 80,
-                            due_amount: 20,
-                            status: "Draft",
-                        },
-                        {
-                            id: "INV0002",
-                            customer: "Jane Smith",
-                            date: "2022-11-15",
-                            quantity: 3,
-                            grand_total: 250,
-                            amount: 150,
-                            due_amount: 100,
-                            status: "Pending",
-                        },
-                        {
-                            id: "INV0003",
-                            customer: "Alice Johnson",
-                            date: "2023-01-05",
-                            quantity: 10,
-                            grand_total: 175,
-                            amount: 175,
-                            due_amount: 0,
-                            status: "Paid",
-                        },
-                        {
-                            id: "INV0004",
-                            customer: "Michael Brown",
-                            date: "2023-02-20",
-                            quantity: 2,
-                            grand_total: 50,
-                            amount: 25,
-                            due_amount: 25,
-                            status: "Overdue",
-                        },
                     ]}
-                /></div>
+                    data={invoiceData}
+                    isLoading={ivnoiceQuery.isLoading}
+                /> */}
+            </div>
         </div>
     )
 }
 
 export default Page;
-
-

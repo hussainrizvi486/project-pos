@@ -6,12 +6,13 @@ import { toast } from "sonner"
 import { Command } from "cmdk";
 
 import {
-  getPosSummary,
+  getSummary,
   removeItem,
   updateItemQuantity,
+  updateCustomer
 } from "@features/pos/reducers/summary";
 
-import { Check, ChevronsUpDown, Divide, FilePenLine, Minus, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronsUpDown, FilePenLine, Minus, Plus, Trash2 } from "lucide-react";
 
 import {
   Popover,
@@ -21,10 +22,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@utils/index";
 import { useNavigate } from "react-router-dom";
-// import { cn } from "@utils/index";
-// import { Button } from "@components/ui/button";
 
-// interface POSItem { }
 
 const fetchCustomer = async () => {
   const request = axios.get(import.meta.env.VITE_API_URL + "/pos/api/customer");
@@ -32,13 +30,31 @@ const fetchCustomer = async () => {
 }
 
 export const Summary = () => {
-  const POSSummary = useSelector(getPosSummary);
+  const dispatch = useDispatch();
+
+  const POSSummary = useSelector(getSummary);
   const navigate = useNavigate();
   const summaryItems = POSSummary?.summaryItems;
 
 
 
+
+  const handleCustomerChange = (data) => {
+
+    dispatch(updateCustomer(data));
+  }
+
+
   const handleCheckout = () => {
+    if (!POSSummary.customer) {
+      toast("Please select a customer");
+      return
+    }
+
+    if (!POSSummary.summaryItems.length) {
+      toast("Please add items to the cart");
+      return
+    }
     navigate("/checkout");
   }
 
@@ -68,7 +84,7 @@ export const Summary = () => {
   return (
     <div>
       <div>
-        <CustomerField />
+        <CustomerField onChange={handleCustomerChange} />
       </div>
       <div className="mb-4">
         <h1 className="font-bold text-center ">Order Summary</h1>
@@ -187,7 +203,7 @@ export const POSSummaryItem = ({ item }) => {
 
 
 
-const CustomerField = () => {
+const CustomerField = ({ onChange }) => {
   const customerQuery = useQuery({
     queryKey: ["customer"],
     queryFn: fetchCustomer,
@@ -202,8 +218,6 @@ const CustomerField = () => {
 
 
   const [options, setOptions] = useState<OptionType[]>([]);
-  // const [searchQuery, setSearchQuery] = useState("");
-
   const [value, setValue] = useState<OptionType>(null);
 
 
@@ -223,6 +237,9 @@ const CustomerField = () => {
 
   const handleSelect = (value: OptionType) => {
     setValue(value);
+    if (onChange) {
+      onChange(value);
+    }
   }
 
   console.log(options);

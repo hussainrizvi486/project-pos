@@ -1,47 +1,96 @@
-import * as Combobox from '@radix-ui/react-combobox';
-import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { Command } from 'cmdk';
+import { ChevronsUpDown, Check } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger, } from "@components/ui/popover";
+import { cn } from '@utils/index';
 
-export function AutoComplete({ suggestions, value, onChange, placeholder }) {
-    // Filter suggestions based on the current input value (case-insensitive)
-    const filteredSuggestions = suggestions.filter((suggestion) =>
-        suggestion.toLowerCase().includes(value.toLowerCase())
-    );
 
-    return (
-        <Combobox.Root onValueChange={onChange}>
-            <Combobox.Input
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder={placeholder}
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Search"
-            />
-            <Combobox.Portal>
-                <Combobox.Content className="absolute w-full bg-white border rounded shadow-lg mt-1 z-10">
-                    <div className="max-h-60 overflow-y-auto">
-                        {filteredSuggestions.map((suggestion) => (
-                            <Combobox.Item
-                                key={suggestion}
-                                value={suggestion}
-                                className="p-2 hover:bg-gray-100 cursor-pointer"
-                            >
-                                {suggestion}
-                            </Combobox.Item>
-                        ))}
-                    </div>
-                </Combobox.Content>
-            </Combobox.Portal>
-        </Combobox.Root>
-    );
+export interface Option {
+    label: string;
+    value: string;
 }
 
-AutoComplete.propTypes = {
-    suggestions: PropTypes.arrayOf(PropTypes.string).isRequired,
-    value: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    placeholder: PropTypes.string,
-};
+interface AutoCompleteProps {
+    options?: Option[];
+    className?: string;
+    label?: string;
+    placeholder?: string;
+    onChange?: (option: Option | null) => void;
+    value?: Option | null;
+    renderOption?: (option: Option) => React.ReactNode;
+}
 
-AutoComplete.defaultProps = {
-    placeholder: 'Type to search...',
-};
+
+const defaultRenderOption = (option: Option, current: Option) => (
+    <div className='flex gap-2 px-2.5 py-1.5 overflow-hidden items-center hover:bg-gray-100 cursor-pointer rounded-md transition-colors'>
+        <div className='flex-1 truncate text-sm'>{option.label}</div>
+        <Check
+            className={cn(
+                "ml-auto size-4",
+                option?.value === current?.value ? "opacity-100" : "opacity-0"
+            )}
+        />
+    </div>
+);
+
+
+export const AutoComplete: React.FC<AutoCompleteProps> = ({
+    options = [],
+    className = "",
+    placeholder = "Search",
+    onChange,
+    value,
+    renderOption
+}) => {
+    const [open, setOpen] = useState(false);
+    const [selected, setSelected] = useState<Option | null>(value || null);
+
+
+    const handleSelect = (option: Option) => {
+        setSelected(option);
+        onChange?.(option);
+        setOpen(false);
+    };
+
+    return (
+        <div>
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <button
+                        className={cn('w-full border py-1.5 px-2 rounded text-sm text-left text-gray-600', className)}
+                        aria-expanded={open}
+                    >
+                        <div className='flex items-center justify-between gap-2'>
+                            <div>{selected ? selected.label : placeholder}</div>
+                            <ChevronsUpDown className='size-4' />
+                        </div>
+                    </button>
+                </PopoverTrigger>
+                <PopoverContent
+                    style={{
+                        width: "var(--radix-popover-trigger-width)"
+                    }}
+                >
+                    <Command>
+                        <Command.Input
+                            className='border w-full py-1.5 px-2 rounded text-sm ring-0 focus:ring-2 outline-none'
+                            placeholder={"Search"}
+                        />
+                        <Command.Empty className="py-2 text-sm text-center text-gray-500">No results found.</Command.Empty>
+                        <Command.Group className='mt-2 max-h-60 overflow-auto'>
+                            {options.map((option, i) => (
+                                <Command.Item
+                                    key={option.value || i}
+                                    onSelect={() => handleSelect(option)}
+                                    className="cursor-pointer"
+                                >
+                                    {renderOption ? renderOption(option) : defaultRenderOption(option, selected)}
+                                </Command.Item>
+                            ))}
+                        </Command.Group>
+                    </Command>
+                </PopoverContent>
+            </Popover>
+        </div>
+    );
+}

@@ -11,9 +11,9 @@ const store = configureStore({
 })
 
 export default store;
-
 export type AppStore = typeof store
-export type RootState = ReturnType<AppStore['getState']>
+// export type RootState = ReturnType<AppStore['getState']>
+export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = AppStore['dispatch']
 
 export type AppThunk<ThunkReturnType = void> = ThunkAction<

@@ -46,13 +46,18 @@ class POSInvoiceSerializer(serializers.ModelSerializer):
 
 
 class POSInvoiceListSerializer(serializers.ModelSerializer):
-    customer = serializers.CharField(source="customer.customer_name", read_only=True)
+    customer_name = serializers.CharField(
+        source="customer.customer_name", read_only=True
+    )
 
     class Meta:
         model = POSInvoice
         fields = [
+            "status",
             "id",
+            "invoice_no",
             "customer",
+            "customer_name",
             "posting_date",
             "total_qty",
             "net_total",

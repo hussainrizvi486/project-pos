@@ -9,9 +9,11 @@ import { Toaster } from "sonner";
 // import { Checkbox } from "@components/ui/checkbox";
 
 const POSPage = React.lazy(() => import("./page/pos/index"));
-const InvoicePage = React.lazy(() => import("./page/invoice/index"));
+// const InvoicePage = React.lazy(() => import("./page/invoice/index"));
 const LoginPage = React.lazy(() => import("./page/auth/login"));
 const CheckoutPage = React.lazy(() => import("./page/checkout/index"));
+const ItemPage = React.lazy(() => import("@features/admin/pages/item/index"));
+
 
 const LoadingSpinner = () => {
   return (
@@ -21,6 +23,9 @@ const LoadingSpinner = () => {
   );
 };
 
+const InvoiceListPage = React.lazy(() => import("@features/admin/pages/invoice"));
+const InvoiceCreatePage = React.lazy(() => import("@features/admin/pages/invoice/create"));
+
 
 function POSApp() {
   return (
@@ -29,9 +34,11 @@ function POSApp() {
       <Routes>
         <Route element={<SidebarLayout />}>
           <Route path="/" element={<POSPage />} index />
-          <Route path="/invoice" element={<InvoicePage />} />
+          <Route path="/invoice" element={<InvoiceListPage />} />
+          <Route path="/invoice/create" element={<InvoiceCreatePage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/form" element={<DataForm />} />
+          <Route path="/item" element={<ItemPage />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
       </Routes>

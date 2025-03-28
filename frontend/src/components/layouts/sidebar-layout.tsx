@@ -26,6 +26,7 @@ const SIDEBAR_ITEMS = [
     {
         label: "Inventory",
         icon: <PackageOpen />,
+        url: "/item",
         handleClick: function () { }
     },
 ];
@@ -69,7 +70,9 @@ export const SidebarLayout = () => {
 
             <div className="flex-auto">
                 <Header />
-                <Outlet />
+                <div className="p-4">
+                    <Outlet />
+                </div>
             </div>
 
         </SidebarProvider>

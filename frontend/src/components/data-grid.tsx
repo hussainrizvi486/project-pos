@@ -58,7 +58,7 @@ const DataGrid: React.FC<DataGridProps> = ({ columns, data }) => {
                     <div className='bg-gray-100'>
                         <div className='flex'>
                             {columns.map((column, index) => (
-                                <div className="basis-full" key={index}>
+                                <div className="basis-full" key={index} style={{ width: column.width || 'auto', flex: column.width ? 'none' : 1 }}>
                                     <GridColCell key={index} column={column} />
                                 </div>
                             ))}
@@ -68,7 +68,7 @@ const DataGrid: React.FC<DataGridProps> = ({ columns, data }) => {
                         {data?.map((row, rowIndex) => (
                             <div key={rowIndex} className='flex border-b border-gray cursor-pointer hover:bg-gray-50 transition-all'>
                                 {columns.map((column, index) => (
-                                    <div className='basis-full' key={index}>
+                                    <div className='basis-full' key={index} style={{ width: column.width || 'auto', flex: column.width ? 'none' : 1 }}>
                                         <DataGridCell column={column} value={row[column.accessor]} />
                                     </div>
                                 ))}

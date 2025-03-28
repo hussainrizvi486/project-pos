@@ -1,274 +1,228 @@
-import React from "react";
-// import { cn, decimal } from "@utils";
-import { CircleX } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import React, { useEffect, useState } from "react";
 import { Input } from "@components/ui/input";
+import { TableInput } from "@components/table-input";
+import { AutoComplete } from "@components/ui/autocomplete";
 
 
-
-interface FormFieldType {
-    label: string
-    required?: boolean
-    name: string
-    placeholder?: string
-    type: "text" | "textarea" | "date" | "select" | "number"
-    options?: Array<{ label: string, value: string }>
-}
-
-
-const formFields = [
-    {
-        label: "Details",
-        columns: [
-            [
-                {
-                    label: "Customer",
-                    type: "text",
-                    name: "customer",
-                    placeholder: "Enter customer name",
-                    required: true,
-                },
-                {
-                    label: "Company",
-                    type: "text",
-                    name: "company",
-                    placeholder: "Enter company name",
-                    required: true,
-                },
-                {
-                    label: "Posting Date",
-                    type: "date",
-                    name: "posting_date",
-                    required: true,
-                },
-            ],
-            [
-                {
-                    label: "Customer Address",
-                    type: "textarea",
-                    name: "customer_address",
-                    placeholder: "Enter customer address",
-                },
-                {
-                    label: "Company Address",
-                    type: "textarea",
-                    name: "company_address",
-                    placeholder: "Enter company address",
-                },
-            ],
-        ],
-    },
-    {
-        label: "Taxes and Charges",
-        columns: [
-            [
-                {
-                    label: "Tax Template",
-                    type: "select",
-                    name: "tax_template",
-                    options: [
-                        { label: "VAT", value: "vat" },
-                        { label: "GST", value: "gst" },
-                    ],
-                    required: true,
-                },
-                {
-                    label: "Tax Amount",
-                    type: "number",
-                    name: "tax_amount",
-                    required: true,
-                },
-            ],
-        ],
-    },
-    {
-        label: "Totals",
-        columns: [
-            [],
-            [
-                {
-                    label: "Net Total",
-                    type: "float",
-                    name: "net_total",
-                    required: true,
-                },
-                {
-                    label: "Grand Total",
-                    type: "float",
-                    name: "grand_total",
-                    required: true,
-                },
-                {
-                    label: "Outstanding Amount",
-                    precision: 3,
-                    type: "float",
-                    name: "outstanding_amount",
-                    required: true,
-                },
-            ],
-        ],
-    },
-];
-
-
-
-
-
-
-const FormSection = ({ children }) => {
+export const Spinner = () => {
     return (
-        <div className="mb-4 border-b py-4">
-            {children}
-        </div>
+        <svg className="mr-3 -ml-1 size-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
     )
 }
 
-const FormColumn = ({ children }) => {
-    return (
-        <div className="basis-full">
-            {children}
-        </div>
-    )
+export interface FormFieldType {
+    label: string;
+    onChange?: (value: any) => void;
+    name: string;
+    required?: boolean;
+    placeholder?: string;
+    type: "text" | "textarea" | "date" | "select" | "number" | "autocomplete" | "float" | "table";
+    options?: Array<{ label: string; value: string }>;
 }
 
-export const DataForm = () => {
+interface FormSection {
+    label: string;
+    columns: [][];
+}
 
-    const renderField = ({ field }: { field: FormFieldType }) => {
+interface DataFormProps {
+    formFields: FormSection[];
+}
+
+const FormField: React.FC<{
+    field: FormFieldType;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>, field: FormFieldType) => void;
+    state: { hasError: boolean; error?: string };
+}> = ({ field, onChange, state }) => {
+
+    const { hasError, error } = state;
+
+
+    const handleChange = (value: any) => {
+        onChange(value, field);
+        field.onChange?.(value);
+    };
+
+    const renderFieldByType = () => {
+        const commonProps = {
+            name: field.name,
+            placeholder: field.placeholder,
+            required: field.required,
+            className: "py-1.5 px-2",
+            onChange: handleChange,
+        };
+
         switch (field.type) {
             case "text":
-                return <Input {...field} />
+                return <Input type="text" {...commonProps} />;
             case "number":
-                return (<Input {...field} />)
-
+                return <Input type="number" {...commonProps} />;
+            case "float":
+                return <Input type="float"  {...commonProps} />;
+            case "autocomplete":
+                return <AutoComplete {...field} {...commonProps} className="py-1.5 px-2" />;
+            case "table":
+                return <TableInput {...field} />;
             default:
-                return (<Input {...field} />)
+                return <Input type="text" {...commonProps} />;
         }
-
-    }
-
-
-    return (
-        <div className="px-2">
-            <form className="mt-4">
-                {formFields.map((section, index) => {
-                    const { columns, label } = section
-                    return (
-                        <div key={index}>
-                            <FormSection key={index}>
-                                <h2 className="text-lg font-semibold mb-2">{label}</h2>
-                                <div className="flex gap-x-2">
-                                    {columns.map((columns, index) => {
-                                        return (
-                                            <FormColumn key={index}>
-
-                                                {columns.map((field, index) => (
-                                                    <div key={index} className="mb-4">
-                                                        <label className="block mb-2 text-sm font-medium text-gray-700">{field.label}</label>
-                                                        {renderField({ field })}
-                                                    </div>
-                                                ))}
-                                            </FormColumn>
-                                        )
-                                    })}
-                                </div>
-                            </FormSection>
-                        </div>
-                    )
-                })}
-            </form>
-
-
-            <button className="inline-flex cursor-not-allowed items-center rounded-md bg-indigo-500 px-4 py-2 text-sm leading-6 font-semibold text-white transition duration-150 ease-in-out hover:bg-indigo-400">
-                <svg className="mr-3 -ml-1 size-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                Save
-            </button>
-        </div>
-    );
-};
-
-
-
-interface TableInputProps {
-    columns: Array<FormFieldType>;
-    value: Array<Record<string, any>>;
-    onChange: (value: Array<Record<string, any>>) => void;
-}
-
-export const TableInput: React.FC<TableInputProps> = ({ columns, value = [], onChange }) => {
-    const handleAddRow = () => {
-        const newRow = columns.reduce((acc, column) => {
-            acc[column.name] = "";
-            return acc;
-        }, {} as Record<string, any>);
-        onChange([...value, newRow]);
-    };
-
-    const handleRemoveRow = (index: number) => {
-        const newValue = [...value];
-        newValue.splice(index, 1);
-        onChange(newValue);
-    };
-
-    const handleCellChange = (rowIndex: number, columnName: string, cellValue: any) => {
-        const newValue = [...value];
-        newValue[rowIndex] = {
-            ...newValue[rowIndex],
-            [columnName]: cellValue
-        };
-        onChange(newValue);
     };
 
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead>
-                    <tr>
-                        {columns.map((column, index) => (
-                            <th
-                                key={index}
-                                className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
-                                {column.label}
-                            </th>
-                        ))}
-                        <th className="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {value.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {columns.map((column, colIndex) => (
-                                <td key={colIndex} className="px-6 py-4 whitespace-nowrap">
-                                    <Input
-                                        {...column}
-                                        value={row[column.name] || ""}
-                                        onChange={(val) => handleCellChange(rowIndex, column.name, val)}
-                                    />
-                                </td>
-                            ))}
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                                <button
-                                    type="button"
-                                    onClick={() => handleRemoveRow(rowIndex)}
-                                    className="text-red-600 hover:text-red-900"
-                                >
-                                    <CircleX />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <div className="mt-2">
-                <button
-                    type="button"
-                    onClick={handleAddRow}
-                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                >
-                    Add Row
-                </button>
+        <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+                {field.label}  {field.required && <span className="text-destructive">*</span>}
+            </label>
+            <div className={`rounded-md ${hasError ? "border border-destructive" : ""}`}>
+                {renderFieldByType()}
+            </div>
+            <div className="">
+                {hasError && error && <div className="text-destructive text-xs mt-1 ml-1">{error}</div>}
             </div>
         </div>
     );
 };
+
+
+const FormSection: React.FC<{
+    children: React.ReactNode; label: string;
+}> = ({ children, label }) => (
+    <div className="mb-4 border-b py-4" >
+        <h2 className="text-lg font-semibold mb-2" > {label} </h2>
+        {children}
+    </div>
+);
+
+const FormColumn: React.FC<{ children: React.ReactNode; }> = ({ children }) => (
+    <div className="basis-full shrink-0 max-w-lg" >
+        {children}
+    </div>
+);
+
+
+
+const getFieldState = (fields: FormFieldType[]) => {
+    const state = {};
+    for (const field of fields) {
+        state[field.name] = {
+            df: field,
+            value: "",
+            error: "",
+            hasError: false,
+        }
+    }
+    return state;
+}
+
+const getFieldsArray = (fields) => {
+    const data = []
+    for (const i of fields) {
+        for (const j of i.columns) {
+            for (const k of j) {
+                data.push(k)
+            }
+        }
+    }
+
+    return data
+}
+
+export const DataForm: React.FC<DataFormProps> = ({ formFields, onSave }) => {
+    const fieldsArray = getFieldsArray(formFields);
+    const [fieldState, setFieldState] = useState(getFieldState(fieldsArray));
+    const [data, setData] = useState({});
+
+
+
+    const updateFieldState = (name: string, value: object) => {
+        setFieldState((prev) => ({
+            ...prev,
+            [name]: {
+                ...prev[name],
+                ...value,
+            },
+        }));
+    }
+
+    const handleChange = (value: any, field: FormFieldType) => {
+        setData({ ...data, [field.name]: value });
+        updateFieldState(field.name, { value: value });
+    }
+
+
+    const validateForm = () => {
+        let validated = true;
+        for (const field of fieldsArray) {
+
+            const value = data[field.name];
+
+            if (field.required && !value) {
+                validated = false;
+                updateFieldState(field.name, {
+                    error: "This field is required",
+                    hasError: true,
+                });
+            } else {
+                updateFieldState(field.name, {
+                    error: "",
+                    hasError: false,
+                });
+            }
+        }
+        return validated;
+    }
+
+    const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!validateForm()) {
+            return
+        }
+
+        onSave?.(data);
+    }
+
+
+    return (
+        <div>
+            <form onSubmit={handleSave}>
+                {formFields?.map((section, sectionIndex) => (
+                    <FormSection key={sectionIndex} label={section.label}>
+                        <div className="flex gap-x-2">
+                            {section.columns.map((column, columnIndex) => {
+                                const fields = column;
+                                return (
+                                    <FormColumn key={columnIndex}>
+                                        {fields?.map((field, fieldIndex) => (
+                                            <div className="mb-4" key={fieldIndex}>
+                                                <FormField
+                                                    field={field}
+                                                    state={fieldState[field.name]}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
+
+                                        ))}
+                                    </FormColumn>
+                                )
+                            })}
+                        </div>
+                    </FormSection>
+                ))}
+                <button type="submit"
+                    className="inline-flex cursor-pointer items-center rounded-md bg-primary px-4 py-2 text-sm leading-6 font-semibold text-primary-foreground transition duration-150 ease-in-out hover:bg-gray-700"
+                >
+                    {/* <Spinner /> */}
+                    Save</button>
+            </form>
+
+        </div>
+    );
+};
+
+
+
