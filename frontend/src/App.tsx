@@ -13,7 +13,7 @@ const POSPage = React.lazy(() => import("./page/pos/index"));
 const LoginPage = React.lazy(() => import("./page/auth/login"));
 const CheckoutPage = React.lazy(() => import("./page/checkout/index"));
 const ItemPage = React.lazy(() => import("@features/admin/pages/item/index"));
-const CreateItem = React.lazy(() => import("@features/admin/pages/item/create"));
+const ItemForm = React.lazy(() => import("@features/admin/pages/item/form"));
 
 
 const LoadingSpinner = () => {
@@ -40,7 +40,8 @@ function POSApp() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/form" element={<DataForm />} />
           <Route path="/item" element={<ItemPage />} />
-          <Route path="/item/create" element={<CreateItem />} />
+          <Route path="/item/create" element={<ItemForm />} />
+          <Route path="/item/update/:id" element={<ItemForm />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
       </Routes>

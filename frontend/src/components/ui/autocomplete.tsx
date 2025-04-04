@@ -22,17 +22,21 @@ interface AutoCompleteProps {
 }
 
 
-const defaultRenderOption = (option: Option, current: Option) => (
-    <div className='flex gap-2 px-2.5 py-1.5 overflow-hidden items-center hover:bg-gray-100 cursor-pointer rounded-md transition-colors'>
-        <div className='flex-1 truncate text-sm'>{option.label}</div>
-        <Check
-            className={cn(
-                "ml-auto size-4",
-                option?.value === current?.value ? "opacity-100" : "opacity-0"
-            )}
-        />
-    </div>
-);
+const defaultRenderOption = (option: Option | null, current: Option) => {
+    if (!option) return null;
+
+    return (
+        <div className='flex gap-2 px-2.5 py-1.5 overflow-hidden items-center hover:bg-gray-100 cursor-pointer rounded-md transition-colors'>
+            <div className='flex-1 truncate text-sm'>{option.label}</div>
+            <Check
+                className={cn(
+                    "ml-auto size-4",
+                    option?.value === current?.value ? "opacity-100" : "opacity-0"
+                )}
+            />
+        </div>
+    )
+};
 
 
 export const AutoComplete: React.FC<AutoCompleteProps> = ({
@@ -77,7 +81,8 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
                         aria-expanded={open}
                     >
                         <div className='flex items-center justify-between gap-2'>
-                            <div>{selected ? selected.label : placeholder}</div>
+                            {selected && renderOption ? renderOption(selected) : selected && !renderOption ? defaultRenderOption(selected) : placeholder}
+                            {/* <div>{selected ? selected.label : placeholder}</div> */}
                             <ChevronsUpDown className='size-4' />
                         </div>
                     </button>

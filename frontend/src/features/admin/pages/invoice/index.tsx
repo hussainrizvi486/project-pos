@@ -1,4 +1,6 @@
 import { BASE_API_URL } from "@api/index";
+import { Spinner } from "@components/data-form";
+import { DataListRow, getGridTemplateColumns } from "@components/data-list";
 import { Button } from "@components/ui/button";
 import { Checkbox } from "@components/ui/checkbox";
 import { useQuery } from "@tanstack/react-query";
@@ -115,34 +117,65 @@ const Index = () => {
                 </div>
             </div>
 
+            <div>
+                <div className="mt-4 border rounded-md overflow-hidden">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <div
+                            className="grid items-center"
+                            key={headerGroup.id}
+                            style={{ gridTemplateColumns: getGridTemplateColumns(headerGroup.headers) }}
+                        >
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <div
+                                        key={header.id}
+                                        className="flex items-center text-left text-sm font-medium px-4 py-2 bg-gray-100 text-gray-700"
+                                    >
+                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ))}
 
-            <div className="mt-4">
-                <table className='w-full border'>
-                    <thead>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header, i) => (
-                                    <th key={i} className="text-left text-sm font-normal px-2 py-2 bg-gray-100 text-gray-500">
-                                        {
-                                            header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())
-                                        }
-                                    </th>
+
+                    {ivnoiceQuery.isLoading &&
+                        <div className="p-2 text-sm text-center text-gray-500 grid items-center">
+                            <div className="flex flex-col items-center justify-center">
+                                <Spinner />
+                                <div className="mt-1 text-sm text-gray-500">Loading...</div>
+                            </div>
+                        </div>
+                    }
+                    {!ivnoiceQuery.isLoading && data?.length &&
+                        (
+                            <div>
+                                {table.getRowModel().rows.map((row) => (
+                                    <DataListRow style={{ gridTemplateColumns: getGridTemplateColumns(table.getHeaderGroups()[0].headers) }} row={row} key={row.id}>
+                                        {row.getVisibleCells().map((cell) => {
+                                            return (
+                                                <div key={cell.id} className="px-4 py-2 text-sm">
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </div>
+                                            );
+                                        })}
+                                    </DataListRow>
                                 ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody>
-                        {
-                            table.getRowModel().rows.map((row) => (
-                                <tr key={row.id} className="border-b last-of-type:border-b-0">
-                                    {row.getVisibleCells().map((cell) => (
-                                        <td key={cell.id} className="px-2 py-2 text-sm">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                                    ))}
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
+                            </div>)
+                    }
+
+
+                </div>
+                {
+                    !ivnoiceQuery.isLoading && !ivnoiceQuery.isError && data?.length > 0 && (
+                        <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
+                            <div>
+                                {Object.keys(rowSelection).length} of {data?.length} item(s) selected
+                            </div>
+                        </div>
+                    )
+                }
+
             </div>
         </div>
     )

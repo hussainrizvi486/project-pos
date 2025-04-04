@@ -9,13 +9,14 @@ from .api import (
 from .api.invoice import create_invoice
 from .api.customer import CustomerAPIView
 from .api.uom import UOMAPIView
-
+from .api.item import main as item_api
 from .api.queries import main as queries
 
 urlpatterns = [
     path("api/query/category", queries.CategoryQuery.as_view()),
     path("api/query/uom", queries.UOMQuery.as_view()),
     path("api/items", ItemList.as_view()),
+    path("api/item/get", item_api.ItemAPI.as_view()),
     path("api/uom", UOMAPIView.as_view()),
     path("api/price-list", PriceListAPIView.as_view()),
     path("api/uom/<str:id>", UOMAPIView.as_view()),

@@ -35,6 +35,9 @@ interface FormSection {
 
 interface DataFormProps {
     formFields: FormSection[];
+    values?: {
+        [key: string]: any;
+    }
 }
 
 const FormField: React.FC<{
@@ -161,11 +164,13 @@ const getFieldsArray = (fields) => {
     return data
 }
 
-export const DataForm: React.FC<DataFormProps> = ({ formFields, onSave }) => {
+export const DataForm: React.FC<DataFormProps> = ({ formFields, onSave, values }) => {
+    console.error("values", values);
     const fieldsArray = getFieldsArray(formFields);
     const [fieldState, setFieldState] = useState(getFieldState(fieldsArray));
-    const [data, setData] = useState({});
+    const [data, setData] = useState(values || {});
 
+    
 
 
     const updateFieldState = (name: string, value: object) => {

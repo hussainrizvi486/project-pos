@@ -109,7 +109,6 @@ export const TextEditor = ({
 }: TextEditorProps) => {
     const [content, setContent] = useState(initialContent);
 
-    console.log(onChange);
     const onUpdate = useCallback(({ editor }: { editor: Editor }) => {
         const html = editor.getHTML();
         setContent(html);

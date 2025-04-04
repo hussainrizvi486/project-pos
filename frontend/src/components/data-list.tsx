@@ -7,7 +7,7 @@ interface DataListProps<TData> {
 }
 
 
-export const getGridTemplateColumns = (headers, withCheckbox = true) => {
+export const getGridTemplateColumns: string = (headers: object[], withCheckbox = true) => {
     const checkBoxWidth = withCheckbox ? '2rem ' : '';
 
     const columnsWidth = headers
