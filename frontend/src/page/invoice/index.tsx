@@ -44,6 +44,7 @@ const Page = () => {
                 <div className="text-lg font-semibold ">POS Invoice</div>
             </div>
             <div></div>
+
             <div className="mt-4">
                 <table className='w-full border'>
                     <thead>
@@ -53,43 +54,17 @@ const Page = () => {
                             ))}
                         </tr>
                     </thead>
+
                     <tbody>
                         {invoiceData.map((row, i) => (
-                            <tr key={i} className="border-t">
+                            <tr key={i} className="">
                                 {columns.map((column, j) => (
                                     <td key={j} className="px-2 py-2 text-sm">{row[column.accessor]}</td>
                                 ))}
                             </tr>
-
                         ))}
                     </tbody>
                 </table>
-                {/* <DataGrid
-                    columns={[
-                        { label: "ID", accessor: "id", sortable: true, },
-                        { label: "Customer", accessor: "customer", sortable: true },
-                        {
-                            label: "Date", accessor: "date", sortable: true, type: "date"
-                        },
-                        {
-                            label: "Quantity", accessor: "quantity", sortable: true, type: "float"
-                        },
-                        { label: "Grand Total", accessor: "grand_total", sortable: true, width: 20, type: "currency" },
-                        { label: "Amount", accessor: "amount", sortable: true, type: "currency" },
-                        { label: "Due Amount", accessor: "due_amount", sortable: true, type: "currency" },
-                        {
-                            label: "Status", accessor: "status", sortable: true,
-                            renderCell: (value) => {
-                                return (
-                                    <Badge radius="medium" color={value == "Pending" ? "yellow" : value == "Paid" ? "green" : value == "Partial" ? "blue" : "red"}>
-                                        {value}
-                                    </Badge>)
-                            }
-                        },
-                    ]}
-                    data={invoiceData}
-                    isLoading={ivnoiceQuery.isLoading}
-                /> */}
             </div>
         </div>
     )

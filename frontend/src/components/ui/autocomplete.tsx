@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Command } from 'cmdk';
 import { ChevronsUpDown, Check } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger, } from "@components/ui/popover";
@@ -15,6 +15,7 @@ interface AutoCompleteProps {
     className?: string;
     label?: string;
     placeholder?: string;
+    getOptions?: (query?: string) => Option[];
     onChange?: (option: Option | null) => void;
     value?: Option | null;
     renderOption?: (option: Option) => React.ReactNode;
@@ -40,8 +41,10 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
     placeholder = "Search",
     onChange,
     value,
+    getOptions,
     renderOption
 }) => {
+    const [results, setResults] = useState<Option[]>(options);
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState<Option | null>(value || null);
 
@@ -51,6 +54,19 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
         onChange?.(option);
         setOpen(false);
     };
+
+
+    useEffect(() => {
+        if (getOptions) {
+            const obj = getOptions();
+            if (obj instanceof Promise) {
+                obj.then((data) => {
+                    setResults(data);
+                });
+            }
+        }
+
+    }, [getOptions]);
 
     return (
         <div>
@@ -78,7 +94,7 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
                         />
                         <Command.Empty className="py-2 text-sm text-center text-gray-500">No results found.</Command.Empty>
                         <Command.Group className='mt-2 max-h-60 overflow-auto'>
-                            {options.map((option, i) => (
+                            {results.map((option, i) => (
                                 <Command.Item
                                     key={option.value || i}
                                     onSelect={() => handleSelect(option)}

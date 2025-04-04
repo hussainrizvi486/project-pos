@@ -13,6 +13,12 @@ class ItemSerailizer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
     image = serializers.SerializerMethodField()
     price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    uom = serializers.SerializerMethodField()
+
+    def get_uom(self, obj):
+        if obj.default_uom:
+            return obj.default_uom.name
+        return
 
     def get_image(self, obj):
         if not obj.image:
@@ -35,6 +41,7 @@ class ItemSerailizer(serializers.ModelSerializer):
             "category",
             "category_name",
             "description",
+            "uom",
             "disabled",
             "variant_of",
             "item_type",

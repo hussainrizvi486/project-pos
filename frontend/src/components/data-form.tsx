@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@components/ui/input";
 import { TableInput } from "@components/table-input";
 import { AutoComplete } from "@components/ui/autocomplete";
+import { TextEditor } from "@components/ui/text-editor";
+import { Checkbox } from "@components/ui/checkbox";
+
 
 
 export const Spinner = () => {
@@ -21,7 +24,7 @@ export interface FormFieldType {
     name: string;
     required?: boolean;
     placeholder?: string;
-    type: "text" | "textarea" | "date" | "select" | "number" | "autocomplete" | "float" | "table";
+    type: "text" | "textarea" | "date" | "select" | "number" | "autocomplete" | "float" | "table" | "texteditor" | "checkbox";
     options?: Array<{ label: string; value: string }>;
 }
 
@@ -64,15 +67,41 @@ const FormField: React.FC<{
                 return <Input type="number" {...commonProps} />;
             case "float":
                 return <Input type="float"  {...commonProps} />;
+            case "file":
+                return <Input type="file"  {...commonProps} />;
             case "autocomplete":
                 return <AutoComplete {...field} {...commonProps} className="py-1.5 px-2" />;
+            case "texteditor":
+                return <TextEditor {...field} {...commonProps} />;
             case "table":
                 return <TableInput {...field} />;
+            case "checkbox":
+                return <Checkbox {...field}  {...commonProps} />;
             default:
                 return <Input type="text" {...commonProps} />;
         }
     };
 
+
+    if (field.type == "checkbox") {
+        return (
+            <div className="mb-1">
+                <div className="flex items-center gap-2">
+                    <div className={`rounded-md ${hasError ? "border border-destructive" : ""}`}>
+                        {renderFieldByType()}
+                        {/* <Checkbox {...field} /> */}
+                    </div>
+                    <label className="block text-sm font-medium text-gray-700" htmlFor={field.name}>
+                        {field.label}  {field.required && <span className="text-destructive">*</span>}
+                    </label>
+                </div>
+                <div className="">
+                    {hasError && error && <div className="text-destructive text-xs mt-1 ml-1">{error}</div>}
+                </div>
+            </div>
+        );
+
+    }
     return (
         <div>
             <label className="block mb-1 text-sm font-medium text-gray-700">
@@ -99,7 +128,7 @@ const FormSection: React.FC<{
 );
 
 const FormColumn: React.FC<{ children: React.ReactNode; }> = ({ children }) => (
-    <div className="basis-full shrink-0 max-w-lg" >
+    <div className="basis-full shrink-0" >
         {children}
     </div>
 );

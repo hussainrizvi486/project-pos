@@ -75,10 +75,9 @@ export const Summary = () => {
       "posting_date": moment(),
     }
 
-    console.warn(import.meta.env.VITE_API_URL + "/pos/api/order/create")
     const request = await axios.post(import.meta.env.VITE_API_URL + "/pos/api/order/create", data);
     toast("Order has been saved")
-    console.log(request.status)
+
   }
 
   return (
@@ -242,7 +241,6 @@ const CustomerField = ({ onChange }) => {
     }
   }
 
-  console.log(options);
   return (
     <Popover>
       <PopoverTrigger asChild>

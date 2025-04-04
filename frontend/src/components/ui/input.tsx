@@ -15,7 +15,7 @@ interface InputProps {
     className?: string
     value?: string,
     required?: boolean
-    type: "text" | "float" | "number"
+    type: "text" | "float" | "number" | "file"
     precision?: number,
     onChange?: (value: any) => void
     onBlur?: (value: any) => void
@@ -31,10 +31,22 @@ const INPUT_CLASS_TYPE = {
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     const precision = props.precision || DEFAULT_PRECISION;
 
-    function parseValue(value) {
+    function parseValue(element: HTMLInputElement) {
+        const value = element.value;
         switch (props.type) {
             case "text":
                 return value;
+            case "file":
+                const { files } = element;
+
+                if (files?.length == 1) {
+                    return files[0];
+                }
+
+                if (files?.length > 1) {
+                    return files;
+                }
+                return null;
             case "float":
                 return decimal(value, precision);
             case "number":
@@ -47,8 +59,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const { value } = e.target;
-        const parsedValue = parseValue(value);
+        // const { value } = e.target;
+        const parsedValue = parseValue(e.target);
 
         if (props.onChange) {
             props.onChange(parsedValue);
@@ -57,23 +69,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
 
     function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
-        e.target.value = parseValue(e.target.value);;
+        e.target.value = parseValue(e.target);;
         if (props.onBlur) {
-            props.onBlur(parseValue(e.target.value));
+            props.onBlur(parseValue(e.target));
         }
     }
 
     return (
         <input
-            type="text"
+            type={props.type === "file" ? "file" : "text"}
             ref={ref}
             name={props.name}
             placeholder={props.placeholder || DEFAULT_PLACEHOLDERS[props.type]}
             onChange={handleChange}
             onBlur={handleBlur}
-            // required={props.required}
             defaultValue={props.value}
-            className={cn("block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-400 text-sm ", INPUT_CLASS_TYPE[props.type], props.className || "")}
+            className={cn("block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-400 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium file:", INPUT_CLASS_TYPE[props.type], props.className || "")}
 
         />
     )

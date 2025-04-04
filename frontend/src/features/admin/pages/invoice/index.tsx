@@ -93,7 +93,6 @@ const Index = () => {
         columns,
         getCoreRowModel: getCoreRowModel(),
         onRowSelectionChange: setRowSelection,
-        // getPaginationRowModel: getPaginationRowModel(),
         state: {
             rowSelection,
         },
@@ -136,7 +135,7 @@ const Index = () => {
                     <tbody>
                         {
                             table.getRowModel().rows.map((row) => (
-                                <tr key={row.id}>
+                                <tr key={row.id} className="border-b last-of-type:border-b-0">
                                     {row.getVisibleCells().map((cell) => (
                                         <td key={cell.id} className="px-2 py-2 text-sm">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
                                     ))}
@@ -146,7 +145,6 @@ const Index = () => {
                     </tbody>
                 </table>
             </div>
-
         </div>
     )
 }
