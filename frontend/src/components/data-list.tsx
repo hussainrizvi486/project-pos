@@ -66,8 +66,8 @@ export const DataListRow: React.FC<{ children: React.ReactNode, styles: React.CS
     }
 
     return (
-        <div className={cn("h-12 overflow-hidden", rowClass)}>
-            <div className="grid items-center border-b last-of-type:border-b-0 hover:bg-gray-50" style={styles} {...props}>
+        <div className={cn("border-b last-of-type:border-b-0 hover:bg-gray-50 h-12 overflow-hidden", rowClass)}>
+            <div className="grid items-center h-12" style={styles} {...props}>
                 {children}
             </div>
         </div>

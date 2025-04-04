@@ -4,7 +4,6 @@ import { Checkbox } from "@components/ui/checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef, flexRender, getCoreRowModel, RowSelectionState, useReactTable } from "@tanstack/react-table";
 import axios from "axios";
-import { Rows } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 

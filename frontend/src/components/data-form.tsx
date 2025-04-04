@@ -128,7 +128,7 @@ const FormSection: React.FC<{
 );
 
 const FormColumn: React.FC<{ children: React.ReactNode; }> = ({ children }) => (
-    <div className="basis-full shrink-0" >
+    <div className="basis-full" >
         {children}
     </div>
 );
@@ -208,9 +208,11 @@ export const DataForm: React.FC<DataFormProps> = ({ formFields, onSave }) => {
 
     const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        console.log("submit called")
         if (!validateForm()) {
             return
         }
+
 
         onSave?.(data);
     }
@@ -242,7 +244,8 @@ export const DataForm: React.FC<DataFormProps> = ({ formFields, onSave }) => {
                         </div>
                     </FormSection>
                 ))}
-                <button type="submit"
+                <button
+                    type="submit"
                     className="inline-flex cursor-pointer items-center rounded-md bg-primary px-4 py-2 text-sm leading-6 font-semibold text-primary-foreground transition duration-150 ease-in-out hover:bg-gray-700"
                 >
                     {/* <Spinner /> */}

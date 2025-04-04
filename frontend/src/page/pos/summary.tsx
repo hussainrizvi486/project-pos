@@ -22,10 +22,12 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@utils/index";
 import { useNavigate } from "react-router-dom";
+import { BASE_API_URL } from "@api/index";
 
 
 const fetchCustomer = async () => {
-  const request = axios.get(import.meta.env.VITE_API_URL + "/pos/api/customer");
+
+  const request = axios.get(BASE_API_URL + "/pos/api/customer");
   return (await request).data;
 }
 
@@ -222,11 +224,12 @@ const CustomerField = ({ onChange }) => {
 
 
   useEffect(() => {
-    if (customerQuery.data) {
-      const data = customerQuery.data.map((customer: object) => {
+    if (customerQuery.data && customerQuery.isSuccess) {
+      console.log(customerQuery.data)
+      const data = customerQuery.data?.map((customer: object) => {
         return {
-          label: customer.customer_name,
-          value: customer.id
+          label: customer?.customer_name,
+          value: customer?.id
         }
       })
       setOptions(data);

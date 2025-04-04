@@ -1,6 +1,6 @@
 const InvoiceList = () => {
     return <div>
-        
+
     </div>
 }
 

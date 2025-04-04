@@ -9,7 +9,8 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import { Checkbox } from "@components/ui/checkbox";
-import { cn } from "@utils/index";
+import { Spinner } from "@components/loaders/spinner";
+import { cn, decimal } from "@utils/index";
 import { BASE_API_URL } from "@api/index";
 import { DataListRow, getGridTemplateColumns } from "@components/data-list";
 import { Link } from "react-router-dom";
@@ -109,7 +110,7 @@ const ItemsTable = () => {
                 width: 200,
             },
             header: () => <div className="text-right flex-auto">Price</div>,
-            cell: ({ row }) => <div className="text-right">${row.getValue("price")}</div>,
+            cell: ({ row }) => <div className="text-right">${decimal(row.getValue("price"))}</div>,
         },
     ];
 
@@ -122,6 +123,8 @@ const ItemsTable = () => {
             rowSelection,
         },
     });
+
+    console.log(data?.items);
 
     return (
         <div>
@@ -140,51 +143,62 @@ const ItemsTable = () => {
 
 
 
-            {isLoading && <div className="p-4 text-center">Loading items...</div>}
-            {isError && <div className="p-4 text-center text-red-500">Failed to load items.</div>}
+            <div className="mt-4 border rounded-md overflow-hidden">
+                {table.getHeaderGroups().map((headerGroup) => (
+                    <div
+                        className="grid items-center"
+                        key={headerGroup.id}
+                        style={{ gridTemplateColumns: getGridTemplateColumns(headerGroup.headers) }}
+                    >
+                        {headerGroup.headers.map((header) => {
+                            return (
+                                <div
+                                    key={header.id}
+                                    className={cn(
+                                        "flex items-center text-left text-sm font-medium px-4 py-2 bg-gray-100 text-gray-700"
+                                    )}
+                                >
+                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                </div>
+                            );
+                        })}
+                    </div>
+                ))}
 
-            {!isLoading && !isError && data?.items?.length === 0 && (
-                <div className="p-4 text-center text-gray-500">No items found.</div>
-            )}
-
-            {!isLoading && !isError && data?.items?.length > 0 && (
-                <div className="mt-4 border rounded-md overflow-hidden">
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <div
-                            className="grid items-center"
-                            key={headerGroup.id}
-                            style={{ gridTemplateColumns: getGridTemplateColumns(headerGroup.headers) }}
-                        >
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <div
-                                        key={header.id}
-                                        className={cn(
-                                            "flex items-center text-left text-sm font-medium px-4 py-3 bg-gray-100 text-gray-700"
-                                        )}
-                                    >
-                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </div>
-                                );
-                            })}
+                {isLoading &&
+                    <div className="p-2 text-sm text-center text-gray-500 grid items-center">
+                        <div className="flex flex-col items-center justify-center">
+                            <Spinner />
+                            <div className="mt-1 text-sm text-gray-500">Loading...</div>
                         </div>
-                    ))}
+                    </div>
+                }
 
-                    {table.getRowModel().rows.map((row) => (
+                {!isLoading && !data?.items?.length && (
+                    <div className="" >
+                        <div className="p-2 text-sm text-center text-gray-500 grid items-center">
+                            No items found.
+                        </div>
+                    </div>
+                )}
 
-                        <DataListRow style={{ gridTemplateColumns: getGridTemplateColumns(table.getHeaderGroups()[0].headers) }} row={row} key={row.id}>
-                            {row.getVisibleCells().map((cell) => {
-                                return (
-                                    <div key={cell.id} className="px-4 py-3 text-sm">
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </div>
-                                );
-                            })}
-                        </DataListRow>
-                    ))}
-                </div>
-            )
-            }
+                {!isLoading && data?.items?.length && (
+                    <div>
+                        {table.getRowModel().rows.map((row) => (
+                            <DataListRow style={{ gridTemplateColumns: getGridTemplateColumns(table.getHeaderGroups()[0].headers) }} row={row} key={row.id}>
+                                {row.getVisibleCells().map((cell) => {
+                                    return (
+                                        <div key={cell.id} className="px-4 py-2 text-sm">
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </div>
+                                    );
+                                })}
+                            </DataListRow>
+                        ))}
+                    </div>
+                )
+                }
+            </div>
 
             {/* Pagination controls could go here */}
             {
