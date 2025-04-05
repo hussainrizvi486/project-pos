@@ -75,8 +75,7 @@ const ItemsTable = () => {
                 width: "3fr",
             },
             cell: ({ row }) => (
-                <Link to="/item/create">
-
+                <Link to={"/item/update/" + row.original.id}>
                     <div className="flex items-center gap-3">
                         <div className="h-6 w-6 shrink-0 rounded-full overflow-hidden">
                             <img
@@ -91,18 +90,20 @@ const ItemsTable = () => {
             ),
         },
         {
-            accessorKey: "category_name",
+            accessorKey: "category",
             meta: {
                 width: 200,
             },
             header: "Category",
-            cell: ({ row }) => <div>{row.getValue("category_name")}</div>,
+            cell: ({ row }) => <div>{row.getValue("category")?.name || ""}</div>
         },
         {
-            accessorKey: "uom",
-            header: "UOM", meta: {
+            accessorKey: "default_uom",
+            header: "UOM",
+            meta: {
                 width: 200,
             },
+            cell: ({ row }) => <div>{row.getValue("default_uom")?.name || ""}</div>,
         },
         {
             accessorKey: "price",
@@ -123,8 +124,6 @@ const ItemsTable = () => {
             rowSelection,
         },
     });
-
-    console.log(data?.items);
 
     return (
         <div>

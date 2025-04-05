@@ -52,7 +52,6 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState<Option | null>(value || null);
 
-
     const handleSelect = (option: Option) => {
         setSelected(option);
         onChange?.(option);

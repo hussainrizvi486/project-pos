@@ -1,22 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+
+import { useForm, Controller, FormProvider } from "react-hook-form";
 import { Input } from "@components/ui/input";
 import { TableInput } from "@components/table-input";
 import { AutoComplete } from "@components/ui/autocomplete";
 import { TextEditor } from "@components/ui/text-editor";
 import { Checkbox } from "@components/ui/checkbox";
+import { cn } from "@utils/index";
+import { Popover, PopoverTrigger } from "./ui/popover";
+import { PopoverContent } from "@radix-ui/react-popover";
+import { Spinner } from "./loaders/spinner";
 
 
 
-export const Spinner = () => {
-    return (
-        <svg className="mr-3 -ml-1 size-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-    )
-}
+
+
+const FileInput = React.forwardRef<HTMLInputElement, any>(
+    ({ onChange, value, ...props }, ref) => {
+        const [open, setOpen] = useState(false);
+        return (
+            <div className="flex items-center gap-2">
+                <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild onClick={e => {
+                        e.preventDefault();
+                    }}
+                        onMouseEnter={() => setOpen(true)}
+                        onMouseLeave={() => setOpen(false)}
+                    >
+                        <input type="file" ref={ref} {...props} onChange={onChange} className={cn("block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-400 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium", props.className)} />
+                    </PopoverTrigger>
+
+                    <PopoverContent className="p-2 bg-white w-full shadow-md rounded-md" sideOffset={5} align="start" alignOffset={5}
+                        onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => e.preventDefault()}
+
+                    >
+                        <div className="gap-2">
+                            <img src={URL.createObjectURL()} alt="" />
+                            {/* <Spinner /> */}
+                            {/* <span>Uploading...</span> */}
+                        </div>
+                    </PopoverContent>
+                </Popover>
+                {/* {value && <img src={URL.createObjectURL(value)} alt="Preview" className="w-16 h-16" />} */}
+            </div>
+        );
+    }
+);
 
 export interface FormFieldType {
     label: string;
@@ -42,25 +73,23 @@ interface DataFormProps {
 
 const FormField: React.FC<{
     field: FormFieldType;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>, field: FormFieldType) => void;
-    state: { hasError: boolean; error?: string };
-}> = ({ field, onChange, state }) => {
+    control: any;
+    errors: any;
+}> = ({ field, control, errors }) => {
+    const error = errors[field.name];
+    const hasError = !!error;
 
-    const { hasError, error } = state;
-
-
-    const handleChange = (value: any) => {
-        onChange(value, field);
-        field.onChange?.(value);
-    };
-
-    const renderFieldByType = () => {
+    const renderFieldByType = (field: FormFieldType, onChange: (value: any) => void, value: any) => {
         const commonProps = {
             name: field.name,
             placeholder: field.placeholder,
-            required: field.required,
             className: "py-1.5 px-2",
-            onChange: handleChange,
+            value,
+            onChange: (e: any) => {
+                const val = e?.target?.value !== undefined ? e.target.value : e;
+                onChange(val);
+                field.onChange?.(val);
+            },
         };
 
         switch (field.type) {
@@ -69,56 +98,71 @@ const FormField: React.FC<{
             case "number":
                 return <Input type="number" {...commonProps} />;
             case "float":
-                return <Input type="float"  {...commonProps} />;
+                return <Input type="number" {...commonProps} />;
             case "file":
-                return <Input type="file"  {...commonProps} />;
+                return <FileInput {...commonProps} />;
             case "autocomplete":
                 return <AutoComplete {...field} {...commonProps} className="py-1.5 px-2" />;
             case "texteditor":
                 return <TextEditor {...field} {...commonProps} />;
             case "table":
-                return <TableInput {...field} />;
+                return <TableInput {...field} onChange={(val) => { onChange(val); field.onChange?.(val); }} value={value} />;
             case "checkbox":
-                return <Checkbox {...field}  {...commonProps} />;
+                return <Checkbox {...field} checked={value} onCheckedChange={(checked) => { onChange(checked); field.onChange?.(checked); }} />;
             default:
                 return <Input type="text" {...commonProps} />;
         }
     };
 
-
-    if (field.type == "checkbox") {
+    if (field.type === "checkbox") {
         return (
             <div className="mb-1">
-                <div className="flex items-center gap-2">
-                    <div className={`rounded-md ${hasError ? "border border-destructive" : ""}`}>
-                        {renderFieldByType()}
-                        {/* <Checkbox {...field} /> */}
-                    </div>
-                    <label className="block text-sm font-medium text-gray-700" htmlFor={field.name}>
-                        {field.label}  {field.required && <span className="text-destructive">*</span>}
-                    </label>
-                </div>
-                <div className="">
-                    {hasError && error && <div className="text-destructive text-xs mt-1 ml-1">{error}</div>}
+                <Controller
+                    name={field.name}
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                        <div className="flex items-center gap-2">
+                            <div className={`rounded-md ${hasError ? "border border-destructive" : ""}`}>
+                                {renderFieldByType(field, onChange, value)}
+                            </div>
+                            <label className="block text-sm font-medium text-gray-700" htmlFor={field.name}>
+                                {field.label}  {field.required && <span className="text-destructive">*</span>}
+                            </label>
+                        </div>
+                    )}
+                />
+                <div>
+                    {hasError && <div className="text-destructive text-xs mt-1 ml-1">{error.message}</div>}
                 </div>
             </div>
         );
-
     }
+
     return (
         <div>
             <label className="block mb-1 text-sm font-medium text-gray-700">
                 {field.label}  {field.required && <span className="text-destructive">*</span>}
             </label>
-            <div className={`rounded-md ${hasError ? "border border-destructive" : ""}`}>
-                {renderFieldByType()}
-            </div>
-            <div className="">
-                {hasError && error && <div className="text-destructive text-xs mt-1 ml-1">{error}</div>}
+            <Controller
+                name={field.name}
+                control={control}
+                rules={{
+                    required: field.required ? `${field.label} is required` : false,
+                    ...field.validation
+                }}
+                render={({ field: { onChange, value } }) => (
+                    <div className={`rounded-md ${hasError ? "border border-destructive" : ""}`}>
+                        {renderFieldByType(field, onChange, value)}
+                    </div>
+                )}
+            />
+            <div>
+                {hasError && <div className="text-destructive text-xs mt-1 ml-1">{error.message}</div>}
             </div>
         </div>
     );
 };
+
 
 
 const FormSection: React.FC<{
@@ -138,12 +182,13 @@ const FormColumn: React.FC<{ children: React.ReactNode; }> = ({ children }) => (
 
 
 
-const getFieldState = (fields: FormFieldType[]) => {
+const getFieldState = (fields: FormFieldType[], values: object | null) => {
     const state = {};
     for (const field of fields) {
+        const value = values ? values[field.name] : null;
         state[field.name] = {
             df: field,
-            value: "",
+            value: value,
             error: "",
             hasError: false,
         }
@@ -165,13 +210,22 @@ const getFieldsArray = (fields) => {
 }
 
 export const DataForm: React.FC<DataFormProps> = ({ formFields, onSave, values }) => {
-    console.error("values", values);
     const fieldsArray = getFieldsArray(formFields);
-    const [fieldState, setFieldState] = useState(getFieldState(fieldsArray));
+    const defaultValues: Record<string, any> = {};
+
+    fieldsArray.forEach(field => {
+        defaultValues[field.name] = values[field.name] !== undefined ? values[field.name] : field.type === "checkbox" ? false : "";
+    });
+    const [fieldState, setFieldState] = useState(getFieldState(fieldsArray, values));
+
     const [data, setData] = useState(values || {});
 
-    
+    const formObject = useForm({
+        defaultValues,
+        mode: "onBlur"
+    });
 
+    const { control, handleSubmit, formState: { errors } } = formObject;
 
     const updateFieldState = (name: string, value: object) => {
         setFieldState((prev) => ({
@@ -187,7 +241,6 @@ export const DataForm: React.FC<DataFormProps> = ({ formFields, onSave, values }
         setData({ ...data, [field.name]: value });
         updateFieldState(field.name, { value: value });
     }
-
 
     const validateForm = () => {
         let validated = true;
@@ -213,50 +266,47 @@ export const DataForm: React.FC<DataFormProps> = ({ formFields, onSave, values }
 
     const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("submit called")
         if (!validateForm()) {
             return
         }
-
-
         onSave?.(data);
     }
+
+    const onSubmit = (data: Record<string, any>) => {
+        onSave?.(data);
+    };
 
 
     return (
         <div>
-            <form onSubmit={handleSave}>
-                {formFields?.map((section, sectionIndex) => (
-                    <FormSection key={sectionIndex} label={section.label}>
-                        <div className="flex gap-x-2">
-                            {section.columns.map((column, columnIndex) => {
-                                const fields = column;
-                                return (
+            <FormProvider {...formObject}>
+                <form onSubmit={handleSubmit(onSubmit)} >
+                    {formFields?.map((section, sectionIndex) => (
+                        <FormSection key={sectionIndex} label={section.label}>
+                            <div className="flex gap-x-2">
+                                {section.columns.map((column, columnIndex) => (
                                     <FormColumn key={columnIndex}>
-                                        {fields?.map((field, fieldIndex) => (
+                                        {column?.map((field, fieldIndex) => (
                                             <div className="mb-4" key={fieldIndex}>
                                                 <FormField
                                                     field={field}
-                                                    state={fieldState[field.name]}
-                                                    onChange={handleChange}
+                                                    control={control}
+                                                    errors={errors}
                                                 />
                                             </div>
-
                                         ))}
                                     </FormColumn>
-                                )
-                            })}
-                        </div>
-                    </FormSection>
-                ))}
-                <button
-                    type="submit"
-                    className="inline-flex cursor-pointer items-center rounded-md bg-primary px-4 py-2 text-sm leading-6 font-semibold text-primary-foreground transition duration-150 ease-in-out hover:bg-gray-700"
-                >
-                    {/* <Spinner /> */}
-                    Save</button>
-            </form>
-
+                                ))}
+                            </div>
+                        </FormSection>
+                    ))}
+                    <button
+                        type="submit"
+                        className="inline-flex cursor-pointer items-center rounded-md bg-primary px-4 py-2 text-sm leading-6 font-semibold text-primary-foreground transition duration-150 ease-in-out hover:bg-gray-700"
+                    >
+                        Save</button>
+                </form>
+            </FormProvider>
         </div>
     );
 };

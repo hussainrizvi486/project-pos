@@ -129,13 +129,13 @@ const Index = () => {
         "item_variant": [],
         "item_name": "Logitech G Pro Wireless Gaming Mouse",
         "category": {
-            "id": "2",
-            "name": "Mouse"
+            "label": "2",
+            "value": "Mouse"
         },
         "description": "About this item\r\nMade with ",
         "uom": {
-            "name": "Pieces",
-            "id": "3e77cb10-e858-438d-b2bd-d2063e377cec"
+            "label": "Pieces",
+            "value": "3e77cb10-e858-438d-b2bd-d2063e377cec"
         },
         "disabled": false,
         "variant_of": null,
@@ -148,6 +148,7 @@ const Index = () => {
             <div className="mb-2">
                 <div className="text-lg font-semibold">Create Item</div>
             </div>
+
 
             <DataForm formFields={fields} onSave={handleSave} values={defaultValues} />
         </div>
