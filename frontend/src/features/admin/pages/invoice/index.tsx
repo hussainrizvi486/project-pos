@@ -1,5 +1,5 @@
 import { BASE_API_URL } from "@api/index";
-import { Spinner } from "@components/data-form";
+import { Spinner } from "@components/loaders/spinner";
 import { DataListRow, getGridTemplateColumns } from "@components/data-list";
 import { Button } from "@components/ui/button";
 import { Checkbox } from "@components/ui/checkbox";
@@ -20,6 +20,7 @@ interface InvocieListItem {
     outstanding_amount: number;
     status: string;
 }
+
 
 const Index = () => {
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});

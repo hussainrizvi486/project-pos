@@ -9,8 +9,7 @@ import { AutoComplete } from "@components/ui/autocomplete";
 import { TextEditor } from "@components/ui/text-editor";
 import { Checkbox } from "@components/ui/checkbox";
 import { cn } from "@utils/index";
-import { Popover, PopoverTrigger } from "./ui/popover";
-import { PopoverContent } from "@radix-ui/react-popover";
+import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
 import { Spinner } from "./loaders/spinner";
 
 
@@ -20,6 +19,7 @@ import { Spinner } from "./loaders/spinner";
 const FileInput = React.forwardRef<HTMLInputElement, any>(
     ({ onChange, value, ...props }, ref) => {
         const [open, setOpen] = useState(false);
+        console.log(value)
         return (
             <div className="flex items-center gap-2">
                 <Popover open={open} onOpenChange={setOpen}>
@@ -32,19 +32,17 @@ const FileInput = React.forwardRef<HTMLInputElement, any>(
                         <input type="file" ref={ref} {...props} onChange={onChange} className={cn("block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-400 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium", props.className)} />
                     </PopoverTrigger>
 
-                    <PopoverContent className="p-2 bg-white w-full shadow-md rounded-md" sideOffset={5} align="start" alignOffset={5}
-                        onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => e.preventDefault()}
-
-                    >
-                        <div className="gap-2">
-                            <img src={URL.createObjectURL()} alt="" />
-                            {/* <Spinner /> */}
-                            {/* <span>Uploading...</span> */}
+                    <PopoverContent sideOffset={5} align="start" alignOffset={5}
+                        onMouseEnter={() => setOpen(true)}
+                        onMouseLeave={() => setOpen(false)}
+                        onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => e.preventDefault()} >
+                        <div className="h-40 w-40 flex items-center justify-center cursor-pointer">
+                            <img src="https://m.media-amazon.com/images/I/71cPWIae4RL._AC_SL1500_.jpg" alt="" />
                         </div>
                     </PopoverContent>
                 </Popover>
-                {/* {value && <img src={URL.createObjectURL(value)} alt="Preview" className="w-16 h-16" />} */}
-            </div>
+
+            </div >
         );
     }
 );
@@ -108,7 +106,8 @@ const FormField: React.FC<{
             case "table":
                 return <TableInput {...field} onChange={(val) => { onChange(val); field.onChange?.(val); }} value={value} />;
             case "checkbox":
-                return <Checkbox {...field} checked={value} onCheckedChange={(checked) => { onChange(checked); field.onChange?.(checked); }} />;
+                return <Checkbox
+                    checked={value} onCheckedChange={(checked) => { onChange(checked); field.onChange?.(checked); }} />;
             default:
                 return <Input type="text" {...commonProps} />;
         }

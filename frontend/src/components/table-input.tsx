@@ -10,6 +10,7 @@ type Value = string | number | undefined | null;
 interface TableInputProps {
     onChange?: (data: Array<Record<string, Value>>) => void;
     label?: string;
+    defaultValue?: Array<Record<string, Value>> | any;
     fields: Array<TableInputField>;
 }
 

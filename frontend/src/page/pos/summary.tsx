@@ -225,7 +225,6 @@ const CustomerField = ({ onChange }) => {
 
   useEffect(() => {
     if (customerQuery.data && customerQuery.isSuccess) {
-      console.log(customerQuery.data)
       const data = customerQuery.data?.map((customer: object) => {
         return {
           label: customer?.customer_name,
