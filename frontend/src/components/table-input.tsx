@@ -69,10 +69,13 @@ export const TableInput: React.FC<TableInputProps> = ({ fields, onChange }) => {
         setData(data.filter((_, i) => i !== index));
     }
 
+
+    const handleChange = () => {
+
+    }
     // const handleChange = ({ index, field, value }: { index: number, field: TableInputField, value: string | number }) => {
     //     const values = [...data];
     //     values[index] = { ...values[index], [field.name]: value };
-
     //     setData(values);
     //     onChange?.(values);
     // }
