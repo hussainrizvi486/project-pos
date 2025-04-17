@@ -3,6 +3,7 @@ import { Command } from 'cmdk';
 import { ChevronsUpDown, Check } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger, } from "@components/ui/popover";
 import { cn } from '@utils/index';
+import { Spinner } from '@components/loaders/spinner';
 
 
 export interface Option {
@@ -16,7 +17,7 @@ interface AutoCompleteProps {
     label?: string;
     placeholder?: string;
     getOptions?: () => Promise<{ label: string; value: string }[]>; onChange?: (option: Option | null) => void;
-    value?: Option | null;
+    value?: Option | null | object;
     renderOption?: (option: Option) => React.ReactNode;
 }
 
@@ -47,9 +48,12 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
     getOptions,
     renderOption
 }) => {
+
     const [results, setResults] = useState<Option[]>(options);
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState<Option | null>(value || null);
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const handleSelect = (option: Option) => {
         setSelected(option);
@@ -61,9 +65,13 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
     useEffect(() => {
         if (getOptions) {
             const obj = getOptions();
+
             if (obj instanceof Promise) {
+                setIsLoading(true);
+
                 obj.then((data) => {
                     setResults(data);
+                    setIsLoading(false);
                 });
             }
         }
@@ -90,11 +98,15 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
                         width: "var(--radix-popover-trigger-width)"
                     }}
                 >
+
                     <Command>
                         <Command.Input
                             className='border w-full py-1.5 px-2 rounded text-sm ring-0 focus:ring-2 outline-none'
                             placeholder={"Search"}
                         />
+                        <Command.Loading className='absolute top-2 right-2'>
+                            <Loader />
+                        </Command.Loading>
                         <Command.Empty className="py-2 text-sm text-center text-gray-500">No results found.</Command.Empty>
                         <Command.Group className='mt-2 max-h-60 overflow-auto'>
                             {results.map((option, i) => (
@@ -108,8 +120,19 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
                             ))}
                         </Command.Group>
                     </Command>
+
                 </PopoverContent>
             </Popover>
         </div>
     );
+}
+
+
+
+const Loader = () => {
+    return (
+        <>
+            <Spinner size='sm' />
+        </>
+    )
 }

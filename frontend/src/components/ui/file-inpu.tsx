@@ -138,17 +138,17 @@ export const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
                         <PopoverContent
                             sideOffset={5}
                             align="start"
+                            className="p-1 shadow-lg border border-gray-200"
                             alignOffset={5}
                             onMouseEnter={() => setOpen(true)}
                             onMouseLeave={() => setOpen(false)}
                             onOpenAutoFocus={(e) => e.preventDefault()}
                             onCloseAutoFocus={(e) => e.preventDefault()}
-                            className="p-0"
                         >
                             <div
                                 className={cn(
                                     "h-40 w-40 flex items-center justify-center cursor-pointer",
-                                    "overflow-hidden rounded-md",
+                                    "overflow-hidden rounded-md ",
                                     previewClassName
                                 )}
                                 onClick={onPreviewClick}

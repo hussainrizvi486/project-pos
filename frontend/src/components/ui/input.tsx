@@ -9,7 +9,7 @@ const DEFAULT_PLACEHOLDERS = {
     "float": "0.00",
 }
 
-type InputType = "text" | "number" | "float" | "file";
+type InputType = "text" | "number" | "float" | "number";
 
 interface InputProps {
     name: string
@@ -35,6 +35,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
     function parseValue(element: HTMLInputElement) {
         const value = element.value;
+
         if (!value) {
             return "";
         }
@@ -42,13 +43,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         switch (props.type) {
             case "text":
                 return value;
-            case "file":
-                const { files } = element;
-                if (!files || !files.length) {
-                    return "";
-                }
-                return files.length === 1 ? files[0] : files;
-
             case "float":
                 return decimal(value, precision);
             case "number":
@@ -56,7 +50,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             default:
                 return value;
         }
-
     };
 
 
@@ -77,19 +70,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         if (props.onBlur) {
             props.onBlur(parseValue(e.target));
         }
-    }
 
-    const defaultValue = props.type === "file" ? "" : props.value;
+    }
 
     return (
         <input
-            type={props.type === "file" ? "file" : "text"}
+            type={props.type}
             ref={ref}
             name={props.name}
             placeholder={props.placeholder || DEFAULT_PLACEHOLDERS[props.type] || ""}
             onChange={handleChange}
             onBlur={handleBlur}
-            defaultValue={defaultValue}
+            defaultValue={props.value}
             className={cn("block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-400 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium", INPUT_CLASS_TYPE[props.type], props.className || "")}
 
         />

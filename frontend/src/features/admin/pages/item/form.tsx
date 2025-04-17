@@ -1,5 +1,5 @@
 import { BASE_API_URL } from "@api/index";
-import { DataForm } from "@components/data-form";
+import { DataForm } from "@components/data-form/index";
 import axios from "axios";
 import { ConeIcon } from "lucide-react";
 import { Params, useNavigate, useParams } from "react-router-dom";
@@ -68,7 +68,6 @@ const fields = [
                             value: val.id
                         }))
                         return options;
-
                     },
                 }
             ],
@@ -129,18 +128,19 @@ const Index = () => {
         "item_variant": [],
         "item_name": "Logitech G Pro Wireless Gaming Mouse",
         "category": {
-            "label": "2",
-            "value": "Mouse"
+            "label": "Mouse",
+            "value": "2"
         },
+
         "description": "About this item\r\nMade with ",
-        "uom": {
+        "default_uom": {
             "label": "Pieces",
             "value": "3e77cb10-e858-438d-b2bd-d2063e377cec"
         },
         "disabled": false,
         "variant_of": null,
         "item_type": "product",
-        "default_uom": "3e77cb10-e858-438d-b2bd-d2063e377cec"
+        // "default_uom": "3e77cb10-e858-438d-b2bd-d2063e377cec"
     }
 
     return (
@@ -149,8 +149,7 @@ const Index = () => {
                 <div className="text-lg font-semibold">Create Item</div>
             </div>
 
-
-            <DataForm formFields={fields} onSave={handleSave} values={defaultValues} />
+            <DataForm fields={fields} onSave={handleSave} values={defaultValues} />
         </div>
     )
 }
