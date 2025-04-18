@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
-import { FieldType, FormField } from "./field";
-import { FormProvider, useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormProvider, useForm, Controller } from "react-hook-form";
+
 import { Button } from "@components/ui/button";
 import { cn } from "@utils/index";
+
+import { FieldType, FormField } from "./field";
 
 const Section: React.FC<{
     children: React.ReactNode;
@@ -30,10 +32,9 @@ interface DataFormProps {
     values?: Record<string, any>;
     onSubmit: (data: Record<string, any>) => void;
     submitLabel?: string;
+
+
 }
-
-// Generate Zod schema dynamically based on fields
-
 
 function getSchema(fields: Array<FieldType>) {
     const schemaMap: Record<string, z.ZodTypeAny> = {};
@@ -55,11 +56,11 @@ function getSchema(fields: Array<FieldType>) {
             case "float":
                 fieldSchema = z.number().or(z.string().regex(/^\d*\.?\d*$/).transform(Number));
                 break;
-            case "date":
-                fieldSchema = z.string().refine(value => !value || !isNaN(Date.parse(value)), {
-                    message: "Invalid date format",
-                });
-                break;
+            // case "date":
+            //     fieldSchema = z.string().refine(value => !value || !isNaN(Date.parse(value)), {
+            //         message: "Invalid date format",
+            //     });
+            //     break;
             case "select":
             case "autocomplete":
                 fieldSchema = z.string();

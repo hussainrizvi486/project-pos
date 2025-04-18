@@ -2,9 +2,9 @@ import "./index.css";
 
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import { SidebarLayout } from "@components/layouts";
-import { DataForm } from "@components/data-form";
 import { Toaster } from "sonner";
+import { SidebarLayout } from "@components/layouts";
+import { DemoComponent } from "./demo/component";
 
 // import { Checkbox } from "@components/ui/checkbox";
 
@@ -33,12 +33,12 @@ function POSApp() {
     <Suspense fallback={<LoadingSpinner />}>
       <Toaster />
       <Routes>
+        <Route path="/demo" element={<DemoComponent />} index />
         <Route element={<SidebarLayout />}>
           <Route path="/" element={<POSPage />} index />
           <Route path="/invoice" element={<InvoiceListPage />} />
           <Route path="/invoice/create" element={<InvoiceCreatePage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/form" element={<DataForm />} />
           <Route path="/item" element={<ItemPage />} />
           <Route path="/item/create" element={<ItemForm />} />
           <Route path="/item/update/:id" element={<ItemForm />} />
